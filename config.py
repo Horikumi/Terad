@@ -28,7 +28,7 @@ SUDO_USER = list(
 
 # ADMIN USERS
 ADMIN_USER = list(
-    map(int, getenv("ADMIN_USER", "5520828938 817088672").split())
+    map(int, getenv("ADMIN_USER", "5545068262").split())
 )  # Input type must be interger
 
 # You'll need a Private Group ID for this.
