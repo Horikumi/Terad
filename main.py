@@ -262,12 +262,7 @@ async def init():
                 except:
                     pass
             else:
-                for user in SUDO_USERS:
-                    try:
-                        forwarded = await app.forward_messages(
-                            user, message.chat.id, message.message_id
-                        )
-                for user in ADMIN_USERS:
+                for user in SUDO_USERS and ADMIN_USERS:
                     try:
                         forwarded = await app.forward_messages(
                             user, message.chat.id, message.message_id
