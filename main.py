@@ -23,6 +23,7 @@ from mongo import db
 
 loop = asyncio.get_event_loop()
 SUDO_USERS = config.SUDO_USER
+ADMIN_USERS = config.ADMIN_USER
 
 app = pyrogram.Client(
     ":YukkiBot:",
