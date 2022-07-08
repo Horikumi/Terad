@@ -219,7 +219,7 @@ async def init():
         user_id = message.from_user.id
         if await mongo.is_banned_user(user_id):
             return
-        if user_id in SUDO_USERS:
+        if user_id in ADMIN_USERS:
             if message.reply_to_message:
                 if (
                     message.text == "/unblock"
@@ -262,7 +262,7 @@ async def init():
                 except:
                     pass
             else:
-                for user in SUDO_USERS and ADMIN_USERS:
+                for user in ADMIN_USERS:
                     try:
                         forwarded = await app.forward_messages(
                             user, message.chat.id, message.message_id
@@ -272,7 +272,7 @@ async def init():
                         pass
 
     @app.on_message(
-        filters.group & ~filters.edited & filters.user(SUDO_USERS),
+        filters.group & ~filters.edited & filters.user(ADMIN_USERS),
         group=grouplist,
     )
     async def incoming_groups(_, message):
