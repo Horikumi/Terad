@@ -19,20 +19,20 @@ API_ID = int(getenv("API_ID", "6"))
 API_HASH = getenv("API_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e")
 
 ## Get it from @Botfather in Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN", "5438498886:AAE4Ce_7yv3WjuCI1ANkM84gCNdjaTHlhCg")
+BOT_TOKEN = getenv("BOT_TOKEN", "5516541619:AAHBZEjFu39s67Ce-WgPOHf__LORUF3LpwU")
 
 # SUDO USERS
 SUDO_USER = list(
-    map(int, getenv("SUDO_USER", "5542739158").split())
+    map(int, getenv("SUDO_USER", "5533713462").split())
 )  # Input type must be interger
 
 # ADMIN USERS
 ADMIN_USER = list(
-    map(int, getenv("ADMIN_USER", "5542739158 5520828938 817088672").split())
+    map(int, getenv("ADMIN_USER", "5533713462 5520828938 817088672").split())
 )  # Input type must be interger
 
 # You'll need a Private Group ID for this.
-LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1001581035936"))
+LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", "-1001766267315"))
 
 # Message to display when someone starts your bot
 PRIVATE_START_MESSAGE = getenv(
