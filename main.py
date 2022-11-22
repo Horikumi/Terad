@@ -73,8 +73,8 @@ async def init():
             await message.reply_text(usage)
 
     @app.on_message(
-        filters.command("block") & filters.user(SUDO_USERS)
-    )
+            filters.command("block") & filters.user(SUDO_USERS)
+        )
     async def block_func(_, message: Message):
         if db is None:
             return await message.reply_text(
@@ -95,24 +95,23 @@ async def init():
                 )
             if await mongo.is_banned_user(replied_user_id):
                 return await message.reply_text("Already Blocked")
-            else:
-                await mongo.add_banned_user(replied_user_id)
-                await message.reply_text("Banned User from The Bot")
-                try:
-                    await app.send_message(
-                        replied_user_id,
-                        "You're now banned from using the Bot by admins.",
-                    )
-                except:
-                    pass
+            await mongo.add_banned_user(replied_user_id)
+            await message.reply_text("Banned User from The Bot")
+            try:
+                await app.send_message(
+                    replied_user_id,
+                    "You're now banned from using the Bot by admins.",
+                )
+            except:
+                pass
         else:
             return await message.reply_text(
                 "Reply to a user's forwarded message to block him from using the bot"
             )
 
     @app.on_message(
-        filters.command("unblock") & filters.user(SUDO_USERS)
-    )
+            filters.command("unblock") & filters.user(SUDO_USERS)
+        )
     async def unblock_func(_, message: Message):
         if db is None:
             return await message.reply_text(
@@ -133,18 +132,17 @@ async def init():
                 )
             if not await mongo.is_banned_user(replied_user_id):
                 return await message.reply_text("Already UnBlocked")
-            else:
-                await mongo.remove_banned_user(replied_user_id)
-                await message.reply_text(
-                    "Unblocked User from The Bot"
+            await mongo.remove_banned_user(replied_user_id)
+            await message.reply_text(
+                "Unblocked User from The Bot"
+            )
+            try:
+                await app.send_message(
+                    replied_user_id,
+                    "You're now unbanned from the Bot by admins.",
                 )
-                try:
-                    await app.send_message(
-                        replied_user_id,
-                        "You're now unbanned from the Bot by admins.",
-                    )
-                except:
-                    pass
+            except:
+                pass
         else:
             return await message.reply_text(
                 "Reply to a user's forwarded message to unblock him from the bot"
@@ -221,11 +219,7 @@ async def init():
             return
         if user_id in ADMIN_USERS:
             if message.reply_to_message:
-                if (
-                    message.text == "/unblock"
-                    or message.text == "/block"
-                    or message.text == "/broadcast"
-                ):
+                if message.text in ["/unblock", "/block", "/broadcast"]:
                     return
                 if not message.reply_to_message.forward_sender_name:
                     return await message.reply_text(
@@ -272,40 +266,37 @@ async def init():
                         pass
 
     @app.on_message(
-        filters.group & ~filters.edited & filters.user(ADMIN_USERS),
-        group=grouplist,
-    )
+            filters.group & ~filters.edited & filters.user(ADMIN_USERS),
+            group=grouplist,
+        )
     async def incoming_groups(_, message):
-        if message.reply_to_message:
-            if (
-                message.text == "/unblock"
-                or message.text == "/block"
-                or message.text == "/broadcast"
-            ):
-                return
-            replied_id = message.reply_to_message_id
-            if not message.reply_to_message.forward_sender_name:
-                return await message.reply_text(
-                    "Please reply to forwarded messages only."
-                )
-            try:
-                replied_user_id = save[replied_id]
-            except Exception as e:
-                print(e)
-                return await message.reply_text(
-                    "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
-                )
-            try:
-                return await app.copy_message(
-                    replied_user_id,
-                    message.chat.id,
-                    message.message_id,
-                )
-            except Exception as e:
-                print(e)
-                return await message.reply_text(
-                    "Failed to send the message, User might have blocked the bot or something wrong happened. Please check logs"
-                )
+        if not message.reply_to_message:
+            return
+        if message.text in ["/unblock", "/block", "/broadcast"]:
+            return
+        replied_id = message.reply_to_message_id
+        if not message.reply_to_message.forward_sender_name:
+            return await message.reply_text(
+                "Please reply to forwarded messages only."
+            )
+        try:
+            replied_user_id = save[replied_id]
+        except Exception as e:
+            print(e)
+            return await message.reply_text(
+                "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
+            )
+        try:
+            return await app.copy_message(
+                replied_user_id,
+                message.chat.id,
+                message.message_id,
+            )
+        except Exception as e:
+            print(e)
+            return await message.reply_text(
+                "Failed to send the message, User might have blocked the bot or something wrong happened. Please check logs"
+            )
 
     print("[LOG] - Yukki Chat Bot Started")
     await idle()

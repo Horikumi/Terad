@@ -26,9 +26,7 @@ if MONGO_DB_URI != None:
     # Served Users
     async def is_served_user(user_id: int) -> bool:
         user = await usersdb.find_one({"user_id": user_id})
-        if not user:
-            return False
-        return True
+        return bool(user)
 
     async def get_served_users() -> list:
         users_list = []
@@ -57,9 +55,7 @@ if MONGO_DB_URI != None:
 
     async def is_banned_user(user_id: int) -> bool:
         user = await blockeddb.find_one({"user_id": user_id})
-        if not user:
-            return False
-        return True
+        return bool(user)
 
     async def add_banned_user(user_id: int):
         is_gbanned = await is_banned_user(user_id)
