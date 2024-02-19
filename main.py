@@ -63,7 +63,7 @@ async def init():
                         forwarded = await app.forward_messages(
                             user, message.chat.id, message.id
                         )
-                        save[forwarded.id] = forwarded.chat.id
+                        save[forwarded.id] = user_id
                     except:
                         pass
            	
