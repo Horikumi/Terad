@@ -60,6 +60,17 @@ async def init():
                     return await message.reply_text(
                         "Failed to send the message, User might have blocked the bot or something wrong happened. Please check logs"
                     )
+                    
+        else:
+           	for user in SUDO_USERS:
+                    try:
+                        forwarded = await app.forward_messages(
+                            user, message.chat.id, message.id
+                        )
+                        save[forwarded.id] = user_id
+                    except:
+                        pass
+           	
 
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
