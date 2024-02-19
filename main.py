@@ -46,7 +46,8 @@ async def init():
                         "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
                     )
                 try:
-                    return await app.copy_message(             
+                    return await app.copy_message(
+                        replied_user_id,
                         message.chat.id,
                         message.id,
                     )
@@ -62,7 +63,7 @@ async def init():
                         forwarded = await app.forward_messages(
                             user, message.chat.id, message.id
                         )
-                        save[forwarded.id] = user_id
+                        save[forwarded.id] = forwarded.chat.id
                     except:
                         pass
            	
