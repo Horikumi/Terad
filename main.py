@@ -1,17 +1,7 @@
-#
-# Copyright (C) 2021-2022 by TeamYukki@Github, < https://github.com/YukkiChatBot >.
-#
-# This file is part of < https://github.com/TeamYukki/YukkiChatBot > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/TeamYukki/YukkiChatBot/blob/master/LICENSE >
-#
-# All rights reserved.
-#
-
 import asyncio
 from sys import version as pyver
 
-import pyrogram
+import pyrogram, uvloop
 from pyrogram import __version__ as pyrover
 from pyrogram import filters, idle
 from pyrogram.errors import FloodWait
@@ -19,7 +9,7 @@ from pyrogram.types import Message
 
 import config
 
-
+uvloop.install()
 loop = asyncio.get_event_loop()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
@@ -38,7 +28,7 @@ grouplist = 1
 async def init():
     await app.start()
 
-    @app.on_message(filters.command(["start", "help"]))
+    @app.on_message(filters.command(["start", "help"]) & filters.private)
     async def start_command(_, message: Message):
         await message.reply_text(config.PRIVATE_START_MESSAGE)
 
