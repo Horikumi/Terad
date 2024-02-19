@@ -46,8 +46,7 @@ async def init():
                         "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
                     )
                 try:
-                    return await app.copy_message(
-                        replied_user_id,
+                    return await app.copy_message(             
                         message.chat.id,
                         message.id,
                     )
