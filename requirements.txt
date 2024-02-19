@@ -6,3 +6,4 @@ python-dotenv
 tgcrypto
 gunicorn
 Flask
+uvloop
