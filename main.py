@@ -229,7 +229,7 @@ async def terabox_func(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 500 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
@@ -305,7 +305,7 @@ async def terabox_dm(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 500 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
