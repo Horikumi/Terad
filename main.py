@@ -217,7 +217,6 @@ async def terabox_func(client, message):
                     if url:
                       try:
                          ril = await client.send_video(message.from_user.id, url, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
-                         await asyncio.sleep(1)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
@@ -229,12 +228,11 @@ async def terabox_func(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 500 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(message.from_user.id, vid_path, has_spoiler=True, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`", duration=int(dur))
-                               await asyncio.sleep(1)
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
@@ -249,7 +247,6 @@ async def terabox_func(client, message):
                            print(e)
                            try:
                              ril = await client.send_document(message.from_user.id, vid_path, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
-                             await asyncio.sleep(1)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
@@ -292,7 +289,6 @@ async def terabox_dm(client, message):
                     if url:
                       try:
                          ril = await client.send_video(-1002001643006, url, caption="Indian")
-                         await asyncio.sleep(1)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
@@ -305,12 +301,11 @@ async def terabox_dm(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 500 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(-1002001643006, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
-                               await asyncio.sleep(1)
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
@@ -326,7 +321,6 @@ async def terabox_dm(client, message):
                            print(e)
                            try:
                              ril = await client.send_document(-1002001643006, vid_path, thumb=thumb_path)
-                             await asyncio.sleep(1)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
@@ -390,7 +384,7 @@ async def incoming_private(_, message):
                     except:
                         pass
            	
-
+"""
 async def init():
     await app.start()
     await app2.start()
@@ -399,3 +393,25 @@ async def init():
   
 if __name__ == "__main__":
     loop.run_until_complete(init())
+"""
+
+async def init():
+    await app.start()
+    await app2.start()
+    print("[LOG] - Yukki Chat Bot Started")
+    await idle()
+
+async def main():
+    # Create separate event loops
+    loop1 = asyncio.new_event_loop()
+    loop2 = asyncio.new_event_loop()
+
+    # Run init() function in each event loop
+    task1 = loop1.create_task(init())
+    task2 = loop2.create_task(init())
+
+    # Run event loops concurrently
+    await asyncio.gather(task1, task2)
+
+# Run the main() function
+asyncio.run(main())
