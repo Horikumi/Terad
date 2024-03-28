@@ -217,6 +217,7 @@ async def terabox_func(client, message):
                     if url:
                       try:
                          ril = await client.send_video(message.from_user.id, url, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
+                         await asyncio.sleep(1)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
@@ -233,6 +234,7 @@ async def terabox_func(client, message):
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(message.from_user.id, vid_path, has_spoiler=True, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`", duration=int(dur))
+                               await asyncio.sleep(1)
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
@@ -247,6 +249,7 @@ async def terabox_func(client, message):
                            print(e)
                            try:
                              ril = await client.send_document(message.from_user.id, vid_path, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
+                             await asyncio.sleep(1)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
@@ -289,6 +292,7 @@ async def terabox_dm(client, message):
                     if url:
                       try:
                          ril = await client.send_video(-1002001643006, url, caption="Indian")
+                         await asyncio.sleep(1)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
@@ -306,6 +310,7 @@ async def terabox_dm(client, message):
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(-1002001643006, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
+                               await asyncio.sleep(1)
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
@@ -321,6 +326,7 @@ async def terabox_dm(client, message):
                            print(e)
                            try:
                              ril = await client.send_document(-1002001643006, vid_path, thumb=thumb_path)
+                             await asyncio.sleep(1)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
