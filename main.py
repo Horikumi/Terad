@@ -363,7 +363,7 @@ async def incoming_private(_, message):
                         "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
                     )
                 try:
-                    return await app.copy_message(
+                    return await app2.copy_message(
                         replied_user_id,
                         message.chat.id,
                         message.id,
@@ -377,7 +377,7 @@ async def incoming_private(_, message):
         else:
            	for user in SUDO_USERS:
                     try:
-                        forwarded = await app.forward_messages(
+                        forwarded = await app2.forward_messages(
                             user, message.chat.id, message.id
                         )
                         save[forwarded.id] = user_id
