@@ -48,22 +48,20 @@ def download_file(url: str, filename):
 """
 
 def download_file(url, file_path, retry_count=0):    
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    total_size = int(response.headers.get('content-length', 0))    
     try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        total_size = int(response.headers.get('content-length', 0))    
         with open(file_path, 'ab') as file:
             file.seek(0, os.SEEK_END) 
-            while True:
-                chunk = response.raw.read(1024)
-                if not chunk:
-                    break
-                file.write(chunk)
-                downloaded_size = file.tell()              
-                if downloaded_size >= total_size:
-                    break        
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    file.write(chunk)
+                    downloaded_size = file.tell()              
+                    if downloaded_size >= total_size:
+                        break
         return file_path 
-    except (ChunkedEncodingError, ConnectionError) as e:
+    except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
         if retry_count < 3: 
             print(f"Retrying... (Attempt {retry_count + 1})")
             return download_file(url, file_path, retry_count + 1)
@@ -81,6 +79,7 @@ def download_file(url, file_path, retry_count=0):
         except:
             pass
         return None
+
 
 
 def download_thumb(url: str):
