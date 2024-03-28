@@ -5,7 +5,6 @@ import humanfriendly, pyshorteners
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
-from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
