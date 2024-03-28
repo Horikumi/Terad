@@ -5,6 +5,8 @@ import humanfriendly, pyshorteners
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
+from requests.exceptions import ChunkedEncodingError, ConnectionError
+
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
 
@@ -26,7 +28,7 @@ async def update_progress(downloaded, total, message, state="Uploading"):
         print(e)
         pass
 
-
+"""
 def download_file(url: str, filename):
     try:
         response = requests.get(url, stream=True)
@@ -43,7 +45,39 @@ def download_file(url: str, filename):
             pass
         return False
 
+"""
 
+def download_file(url, file_path, retry_count=0):
+    headers = {}
+    if os.path.exists(file_path):
+        headers['Range'] = f'bytes={os.path.getsize(file_path)}-'
+
+    try:
+        response = requests.get(url, headers=headers, stream=True)
+        response.raise_for_status()
+        with open(file_path, 'ab') as file:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    file.write(chunk)
+        return file_path  # Return file path upon successful download
+    except (ChunkedEncodingError, ConnectionError) as e:
+        if retry_count < 3:  # Assuming max retries = 2
+            print(f"Retrying... (Attempt {retry_count + 1})")
+            return download_file(url, file_path, retry_count + 1)
+        else:
+            print("Maximum retry attempts reached.")
+            try:
+                os.remove(file_path)
+            except:
+                pass
+            return None
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        try:
+            os.remove(file_path)
+        except:
+            pass
+        return None
 
 
 def download_thumb(url: str):
