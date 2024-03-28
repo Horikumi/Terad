@@ -25,15 +25,12 @@ save = {}
 grouplist = 1
 
 
-async def init():
-    await app.start()
-
-    @app.on_message(filters.command(["start", "help"]) & filters.private)
+@app.on_message(filters.command(["start", "help"]) & filters.private)
     async def start_command(_, message: Message):
         await message.reply_text(config.PRIVATE_START_MESSAGE)
-
-    @app.on_message(filters.private)
-    async def incoming_private(_, message):
+ 
+@app.on_message(filters.private)
+async def incoming_private(_, message):
         user_id = message.from_user.id
         if user_id in ADMIN_USERS:
             if message.reply_to_message:
@@ -68,9 +65,12 @@ async def init():
                         pass
            	
 
+
+async def init():
+    await app.start()
+    await app2.start()
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
-
-
+  
 if __name__ == "__main__":
     loop.run_until_complete(init())
