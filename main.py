@@ -50,18 +50,19 @@ def get_readable_time(seconds: int) -> str:
     readable_time += ": ".join(time_list)
     return readable_time 
 
-app = pyrogram.Client(
-    "ChatBot",
-    config.API_ID,
-    config.API_HASH,
-    bot_token=config.BOT_TOKEN,
-)
 
-app2 = pyrogram.Client(
+app = pyrogram.Client(
     "acha",
     API_ID,
     API_HASH,
     bot_token=BOT_TOKEN,
+)
+
+app2 = pyrogram.Client(
+    "ChatBot",
+    config.API_ID,
+    config.API_HASH,
+    bot_token=config.BOT_TOKEN,
 )
 
 START_TIME = time.time()
@@ -110,7 +111,7 @@ async def is_join(user_id):
 
 
 
-@app2.on_message(filters.command("start") & filters.private)
+@app.on_message(filters.command("start") & filters.private)
 async def start_fun(client, message: Message):
     if len(message.command) > 1 and "unqid" in message.command[1]:              
              unq_id = message.command[1].replace("unqid", "")
@@ -123,7 +124,7 @@ async def start_fun(client, message: Message):
 
 
 
-@app2.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
+@app.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
 async def stats_func(_, message: Message):
         if db is None:
             return await message.reply_text(
@@ -138,7 +139,7 @@ async def stats_func(_, message: Message):
 **Uptime:** {get_readable_time(time.time() - START_TIME)}"""
         await message.reply_text(text)
 
-@app2.on_message(filters.command("broadcast") & filters.private & filters.user(SUDO_USERS))
+@app.on_message(filters.command("broadcast") & filters.private & filters.user(SUDO_USERS))
 async def broadcast_func(_, message: Message):
     if db is None:
             return await message.reply_text(
@@ -177,7 +178,7 @@ async def broadcast_func(_, message: Message):
         pass
 
 
-@app2.on_message(filters.chat(-1002089387849) & (filters.text | filters.caption))
+@app.on_message(filters.chat(-1002089387849) & (filters.text | filters.caption))
 async def message_handler(client, message):
   text = message.text or message.caption
   if "tera" in text or "box" in text:
@@ -191,7 +192,7 @@ def box_fil(_, __, message):
 
 box_filter = filters.create(box_fil)
 
-@app2.on_message(box_filter)
+@app.on_message(box_filter)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
@@ -344,11 +345,11 @@ async def terabox_dm(client, message):
 
 
 
-@app.on_message(filters.command(["start", "help"]) & filters.private)
+@app2.on_message(filters.command(["start", "help"]) & filters.private)
 async def start_command(_, message: Message):
         await message.reply_text(config.PRIVATE_START_MESSAGE)
  
-@app.on_message(filters.private)
+@app2.on_message(filters.private)
 async def incoming_private(_, message):
         user_id = message.from_user.id
         if user_id in ADMIN_USERS:
