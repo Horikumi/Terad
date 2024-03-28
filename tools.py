@@ -50,9 +50,7 @@ def download_file(url: str, filename):
 def download_file(url, file_path, retry_count=0):
     try:
         response = requests.get(url, stream=True)
-        if not response.ok:
-            print(f"Error: HTTP status code {response.status_code}. Skipping download.")
-            return None
+        response.raise_for_status()
         total_size = int(response.headers.get('content-length', 0))
     except Exception as e:
         print(f"Error occurred while getting file size: {e}")
