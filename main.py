@@ -391,9 +391,8 @@ async def init():
     loop2 = asyncio.new_event_loop()
     app_task1 = loop1.create_task(start_bot(app))
     app_task2 = loop2.create_task(start_bot(app2))         
-    await app_task1
-    await app_task2
+    await asyncio.gather(app_task1, app_task2)  # Await both tasks concurrently
     print("[LOG] - Yukki Chat Bot Started")
-  
+    
 if __name__ == "__main__":
     loop.run_until_complete(init())
