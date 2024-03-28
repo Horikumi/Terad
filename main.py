@@ -345,7 +345,7 @@ async def terabox_dm(client, message):
 
 
 @app.on_message(filters.command(["start", "help"]) & filters.private)
-    async def start_command(_, message: Message):
+async def start_command(_, message: Message):
         await message.reply_text(config.PRIVATE_START_MESSAGE)
  
 @app.on_message(filters.private)
