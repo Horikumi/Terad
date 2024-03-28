@@ -384,7 +384,7 @@ async def incoming_private(_, message):
                     except:
                         pass
            	
-"""
+
 async def init():
     await app.start()
     await app2.start()
@@ -393,25 +393,3 @@ async def init():
   
 if __name__ == "__main__":
     loop.run_until_complete(init())
-"""
-
-async def init():
-    await app.start()
-    await app2.start()
-    print("[LOG] - Yukki Chat Bot Started")
-    await idle()
-
-async def main():
-    # Create separate event loops
-    loop1 = asyncio.new_event_loop()
-    loop2 = asyncio.new_event_loop()
-
-    # Run init() function in each event loop
-    task1 = loop1.create_task(init())
-    task2 = loop2.create_task(init())
-
-    # Run event loops concurrently
-    await asyncio.gather(task1, task2)
-
-# Run the main() function
-asyncio.run(main())
