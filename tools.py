@@ -130,31 +130,12 @@ def get_duration(file_path):
 
 
 async def create_session():
-    my_cookie = {
-        'csrfToken': 'nKzPuy3Pq_TKY5PF5dJDHL-T',
-        'browserid': 'khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=',
-        'lang': 'en',
-        '__bid_n': '18e3dd5bb2c9cb73434207',
-        '_ga': 'GA1.1.1811415982.1710434419',
-        '__stripe_mid': '759ba489-0c3b-40da-a098-dd7ab307d05c9f299d',
-        'ndus': 'YyUFJ6pteHui6aeqpjiS29zNRbGE5qH5rhkUikNQ',
-        'RP_ADVERTISER_IN_PAGE_LIMIT': '2',
-        'RP_ADVERTISER_IN_PAGE_INTERVAL_IN_SECONDS': '3600',
-        'RP_ADVERTISER_IN_PAGE_DELAY_BEFORE_SHOW_IN_SECONDS': '2',
-        'RP_ADVERTISER_IN_PAGE_DELAY_BETWEEN_SHOW_IN_SECONDS': '5',
-        'RP_ADVERTISER_IN_PAGE_RESET_LIMIT': 'true',
-        'RP_ADVERTISER_IN_PAGE_POSITION_TYPE': 'TOP_RIGHT',
-        'ab_ymg_result': '{"data":"eb84d2c1e0bdeab29071677f50331dcf403fc7bff26ae89f7083f9ac2372c56c024f56ccb122986ac700e411256ecf254b98f105574a32f4e64b5d1a7d601675debd91d614dd71247689d279997bfab5230397e2af45d54f3625411f04bd34bf7be57c1da5a633636ab9e0a308c853afd0f08d4b9694e619e0483af3f71102f7","key_id":"66","sign":"3072d3c3"}',
-        'ndut_fmt': '339C59B5D29E56CE0DCB918C80D761E90806CCC2C076E32EFEF59B7498160C99',
-        'ab_sr': '1.0.1_YmU4NjFkOTk3Yjk5Yjg1YzliNDg4NDgyMDQ2MDJiMDA1MDBkNmVmNGM2NjA0MmQ4MjhhYjM3MTA4OTQ1ZWQ3YjYxZDZiNWE5OGIzMTNmNWZjOTUxMjhkN2IyNTM0YmJmMDBmNzgzYjdhNzVlZjRiNzlhNGM1MDJiNjI1N2VkNzYyNDdlZjQ3ZTNjMGJlMjM5MzhhNjU5MzdlNGFlMGUxNg==',
-    }
-
-    my_headers = {
+    headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'max-age=0',
         'Connection': 'keep-alive',
-        'Cookie': 'csrfToken=nKzPuy3Pq_TKY5PF5dJDHL-T; browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; lang=en; __bid_n=18e3dd5bb2c9cb73434207; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; ndus=YyUFJ6pteHui6aeqpjiS29zNRbGE5qH5rhkUikNQ; RP_ADVERTISER_IN_PAGE_LIMIT=2; RP_ADVERTISER_IN_PAGE_INTERVAL_IN_SECONDS=3600; RP_ADVERTISER_IN_PAGE_DELAY_BEFORE_SHOW_IN_SECONDS=2; RP_ADVERTISER_IN_PAGE_DELAY_BETWEEN_SHOW_IN_SECONDS=5; RP_ADVERTISER_IN_PAGE_RESET_LIMIT=true; RP_ADVERTISER_IN_PAGE_POSITION_TYPE=TOP_RIGHT; ab_ymg_result={"data":"eb84d2c1e0bdeab29071677f50331dcf403fc7bff26ae89f7083f9ac2372c56c024f56ccb122986ac700e411256ecf254b98f105574a32f4e64b5d1a7d601675debd91d614dd71247689d279997bfab5230397e2af45d54f3625411f04bd34bf7be57c1da5a633636ab9e0a308c853afd0f08d4b9694e619e0483af3f71102f7","key_id":"66","sign":"3072d3c3"}; ndut_fmt=339C59B5D29E56CE0DCB918C80D761E90806CCC2C076E32EFEF59B7498160C99; ab_sr=1.0.1_YmU4NjFkOTk3Yjk5Yjg1YzliNDg4NDgyMDQ2MDJiMDA1MDBkNmVmNGM2NjA0MmQ4MjhhYjM3MTA4OTQ1ZWQ3YjYxZDZiNWE5OGIzMTNmNWZjOTUxMjhkN2IyNTM0YmJmMDBmNzgzYjdhNzVlZjRiNzlhNGM1MDJiNjI1N2VkNzYyNDdlZjQ3ZTNjMGJlMjM5MzhhNjU5MzdlNGFlMGUxNg==; ab_ymg_result={"data":"eb84d2c1e0bdeab29071677f50331dcf403fc7bff26ae89f7083f9ac2372c56c024f56ccb122986ac700e411256ecf254b98f105574a32f4e64b5d1a7d601675debd91d614dd71247689d279997bfab5230397e2',     
+        'Cookie': 'browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; lang=en; __bid_n=18e3dd5bb2c9cb73434207; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __bid_n=18e8bfdfc3be4ea4224207; csrfToken=8JPIz5vKB7OFpUJPYTiUzWtW; ndus=Y23AA8KteHuisa-G0gHj13u4hy-0jpGBB1qMIP6j; ndut_fmt=068CF73643C0A6D33CA63114B295CD291FAE96FC359C85F7B519B6EB40AD2769; ab_sr=1.0.1_Y2Q2NzFmMjJjZjI2ZTIwY2Y1OGRmMjdkYjQ4NDNkYWE5ZjM4N2YwNDM4MjViZThmZWNhMDczYWQxMDNlNjVhNmRhMjEwNWNhMDk0M2Q2YjkzOTcyNDk1MjY0MTYwYTJmMmU4ZTZjOWJhNzRiODkxZjRkYmUzODg0ZjRmZjgwMWUzYTViMzQ3NDBmMzQzMGRiZjg5ZWM3YWZlODUzMDdjYQ==; ab_ymg_result={"data":"eb84d2c1e0bdeab29071677f50331dcf2c3ec7fb62a3feafc0f94cccf1b1ccaa34c5bc0d95e6e60a6b02b3d1577127ebfe85ff48d0f62ecbd8c0fea8b5eb38bcffac8cd6e82103ef074257509767fcbb3cd5db615d54b0eebe88148f78b786a885cecadd43c7a3c60b0d6569bda8e2c9966b647c77cbd9f7c88421c1f557d8b7","key_id":"66","sign":"2e10ba72"}; _ga_06ZNKL8C2E=GS1.1.1711745818.2.1.1711746308.15.0.0',
         'Referer': 'https://terabox.app/',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
@@ -166,9 +147,7 @@ async def create_session():
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"Windows"',
     }
-
-    my_session = aiohttp.ClientSession(cookies=my_cookie)
-    my_session.headers.update(my_headers)
+    my_session = aiohttp.ClientSession(headers=headers) 
     return my_session
 
 async def fetch_download_link_async(url):
