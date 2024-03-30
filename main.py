@@ -265,8 +265,8 @@ async def terabox_dm(client, message):
         is_served = await usersdb.find_one({"user_id": message.chat.id})
         if not is_served:
             return await message.reply_text("Type /start first then try sending url again")
-        if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup and @CheemsChat before using me")
+   #     if not await is_join(message.from_user.id):
+   #         return await message.reply_text("you need to join @CheemsBackup and @CheemsChat before using me")
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
