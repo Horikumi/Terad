@@ -25,7 +25,7 @@ usersdb = db.users
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7186164550:AAFf4kpmfGdY785CeX4FB9SQpDlitPQW-Bc"
+BOT_TOKEN = "7121574962:AAH6hLal7s06jMSM7iY6arJTaeUfnzCDgOk"
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -56,13 +56,6 @@ app = pyrogram.Client(
     API_ID,
     API_HASH,
     bot_token=BOT_TOKEN,
-)
-
-app2 = pyrogram.Client(
-    "ChatBot",
-    config.API_ID,
-    config.API_HASH,
-    bot_token=config.BOT_TOKEN,
 )
 
 START_TIME = time.time()
@@ -177,13 +170,13 @@ async def broadcast_func(_, message: Message):
     except:
         pass
 
-
+"""
 @app.on_message(filters.chat(-1002089387849) & (filters.text | filters.caption))
 async def message_handler(client, message):
   text = message.text or message.caption
   if "tera" in text or "box" in text:
        asyncio.create_task(terabox_func(client, message))
-
+"""
 
 def box_fil(_, __, message):
     if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
@@ -288,12 +281,12 @@ async def terabox_dm(client, message):
                     name, size, url, thumb  = await get_data(link)
                     if url:
                       try:
-                         ril = await client.send_video(-1002001643006, url, caption="Indian")
+                         ril = await client.send_video(message.chat.id, url)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
-                         direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
-                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                         await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -305,12 +298,12 @@ async def terabox_dm(client, message):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
-                               ril = await client.send_video(-1002001643006, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
+                               ril = await client.send_video(message.chat.id, vid_path, thumb=thumb_path, duration=int(dur), has_spoiler=True)
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
-                               direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
-                               await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                               direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"         
+                               await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
                             else:
                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
@@ -320,12 +313,12 @@ async def terabox_dm(client, message):
                          except Exception as e:
                            print(e)
                            try:
-                             ril = await client.send_document(-1002001643006, vid_path, thumb=thumb_path)
+                             ril = await client.send_document(message.chat.id, vid_path, thumb=thumb_path)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
-                             direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
-                             await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                             await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                              await nil.edit_text("Completed")
                            except Exception as e: 
                              print(e)
@@ -342,52 +335,10 @@ async def terabox_dm(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
 
-
-
-
-@app2.on_message(filters.command(["start", "help"]) & filters.private)
-async def start_command(_, message: Message):
-        await message.reply_text(config.PRIVATE_START_MESSAGE)
- 
-@app2.on_message(filters.private)
-async def incoming_private(_, message):
-        user_id = message.from_user.id
-        if user_id in ADMIN_USERS:
-            if message.reply_to_message:
-                replied_id = message.reply_to_message.id
-                try:
-                    replied_user_id = save[replied_id]
-                except Exception as e:
-                    print(e)
-                    return await message.reply_text(
-                        "Failed to fetch user. You might've restarted bot or some error happened. Please check logs"
-                    )
-                try:
-                    return await app2.copy_message(
-                        replied_user_id,
-                        message.chat.id,
-                        message.id,
-                    )
-                except Exception as e:
-                    print(e)
-                    return await message.reply_text(
-                        "Failed to send the message, User might have blocked the bot or something wrong happened. Please check logs"
-                    )
-                    
-        else:
-           	for user in SUDO_USERS:
-                    try:
-                        forwarded = await app2.forward_messages(
-                            user, message.chat.id, message.id
-                        )
-                        save[forwarded.id] = user_id
-                    except:
-                        pass
            	
 
 async def init():
     await app.start()
-    await app2.start()
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
