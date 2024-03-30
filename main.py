@@ -281,7 +281,7 @@ async def terabox_dm(client, message):
                     name, size, url, thumb  = await get_data(link)
                     if url:
                       try:
-                         ril = await client.send_video(message.chat.id, url)
+                         ril = await client.send_video(message.chat.id, url, has_spoiler=True)
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
