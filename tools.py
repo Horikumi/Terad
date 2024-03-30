@@ -222,7 +222,19 @@ async def get_url(download_link):
     return None
      
   
-
+async def get_direct_link(url):
+    try:
+        my_session = await create_session()
+        async with my_session.head(url) as response:
+            response.raise_for_status()
+            direct_link = response.headers.get('Location')
+            return direct_link
+    except Exception as e:
+        print(f"Error fetching direct link: {e}")
+        return None
+    finally:
+        await my_session.close()
+      
 
   
 async def get_data(link_data):
@@ -230,10 +242,12 @@ async def get_data(link_data):
     file_name = link_data["server_filename"]
     file_size = await get_formatted_size_async(link_data["size"])
     download_link = link_data["dlink"]
-    download_link = await get_url(download_link)
+    download_link = await get_direct_link(download_link)
     if not download_link:
-        url = random.choice(download_urls)
-        download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
+        download_link = await get_url(download_link)
+        if not download_link:
+           url = random.choice(download_urls)
+           download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
     download_link = rapi.tinyurl.short(download_link)
     thumb = link_data["thumbs"]["url3"]
     return file_name, file_size, download_link, thumb
