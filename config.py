@@ -23,12 +23,12 @@ BOT_TOKEN = getenv("BOT_TOKEN", "6259808692:AAE7Lt1J2CLvm2A0tN-KRgtB8GqyREmCCD4"
 
 # SUDO USERS
 SUDO_USER = list(
-    map(int, getenv("SUDO_USER", "6609194119").split())
+    map(int, getenv("SUDO_USER", "5545068262").split())
 )  # Input type must be interger
 
 # ADMIN USERS
 ADMIN_USER = list(
-    map(int, getenv("ADMIN_USER", "6609194119").split())
+    map(int, getenv("ADMIN_USER", "5545068262").split())
 )  # Input type must be interger
 
 # Message to display when someone starts your bot
