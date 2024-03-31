@@ -8,7 +8,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import Message
 import pyrogram, asyncio, os, uvloop, humanfriendly, time
 from pyrogram import Client, filters, idle, enums
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
@@ -209,7 +209,9 @@ async def terabox_func(client, message):
                 try:
                     await app.send_message(message.from_user.id, ".")
                 except:
-                    return await message.reply_text("First start me in private", quote=True)
+                    button = InlineKeyboardButton("Click Here", url="https://t.me/teradlrobot?start=True")
+                    keyboard = InlineKeyboardMarkup([[button]])
+                    return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 link_data = await fetch_download_link_async(url)
                 for link in link_data:
