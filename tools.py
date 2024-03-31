@@ -241,11 +241,11 @@ async def get_data(link_data):
   try:
     file_name = link_data["server_filename"]
     file_size = await get_formatted_size_async(link_data["size"])
-    download_link = link_data["dlink"]
-  #  download_link = await get_direct_link(download_link)
+#    download_link = link_data["dlink"]
+#    download_link = await get_direct_link(download_link)
     download_link = None
     if not download_link:
-        download_link = await get_url(download_link)
+        download_link = await get_url(link_data["dlink"])
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
