@@ -242,7 +242,8 @@ async def get_data(link_data):
     file_name = link_data["server_filename"]
     file_size = await get_formatted_size_async(link_data["size"])
     download_link = link_data["dlink"]
-    download_link = await get_direct_link(download_link)
+  #  download_link = await get_direct_link(download_link)
+    download_link = None
     if not download_link:
         download_link = await get_url(download_link)
         if not download_link:
