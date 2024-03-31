@@ -27,7 +27,7 @@ async def update_progress(downloaded, total, message, state="Uploading"):
         print(e)
         pass
 
-
+"""
 def download_file(url: str, filename):
     try:
         response = requests.get(url, stream=True)
@@ -43,9 +43,9 @@ def download_file(url: str, filename):
         except:
             pass
         return False
-
-
+        
 """
+
 def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
@@ -78,7 +78,7 @@ def download_file(url, file_path, retry_count=0):
         except:
             pass
         return None
-"""
+
 
 
 def download_thumb(url: str):
