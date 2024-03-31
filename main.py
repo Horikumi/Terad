@@ -25,7 +25,7 @@ usersdb = db.users
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7121574962:AAH6hLal7s06jMSM7iY6arJTaeUfnzCDgOk"
+BOT_TOKEN = "7121574962:AAEykm0e0I6q258JZHtLBc_6irb86_z1zNs"
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -56,6 +56,13 @@ app = pyrogram.Client(
     API_ID,
     API_HASH,
     bot_token=BOT_TOKEN,
+)
+
+app2 = pyrogram.Client(
+    "ChatBot",
+    config.API_ID,
+    config.API_HASH,
+    bot_token=config.BOT_TOKEN,
 )
 
 START_TIME = time.time()
@@ -265,8 +272,8 @@ async def terabox_dm(client, message):
         is_served = await usersdb.find_one({"user_id": message.chat.id})
         if not is_served:
             return await message.reply_text("Type /start first then try sending url again")
-   #     if not await is_join(message.from_user.id):
-   #         return await message.reply_text("you need to join @CheemsBackup and @CheemsChat before using me")
+        if not await is_join(message.from_user.id):
+            return await message.reply_text("you need to join @CheemsBackup and @CheemsChat before using me")
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
@@ -281,12 +288,12 @@ async def terabox_dm(client, message):
                     name, size, url, thumb  = await get_data(link)
                     if url:
                       try:
-                         ril = await client.send_video(message.chat.id, url, has_spoiler=True)
+                         ril = await client.send_video(-1002069870125, url, caption="Indian")
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -298,12 +305,12 @@ async def terabox_dm(client, message):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
-                               ril = await client.send_video(message.chat.id, vid_path, thumb=thumb_path, duration=int(dur), has_spoiler=True)
+                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
-                               direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"         
-                               await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                               direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                               await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
                             else:
                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
@@ -313,12 +320,12 @@ async def terabox_dm(client, message):
                          except Exception as e:
                            print(e)
                            try:
-                             ril = await client.send_document(message.chat.id, vid_path, thumb=thumb_path)
+                             ril = await client.send_document(-1002069870125, vid_path, thumb=thumb_path)
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
                              direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                             await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                             await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                              await nil.edit_text("Completed")
                            except Exception as e: 
                              print(e)
@@ -334,7 +341,6 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-
            	
 
 async def init():
