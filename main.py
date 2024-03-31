@@ -123,7 +123,6 @@ async def start_fun(client, message: Message):
     return await add_served_user(message.chat.id)
 
 
-
 @app.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
 async def stats_func(_, message: Message):
         if db is None:
@@ -183,6 +182,8 @@ async def message_handler(client, message):
   text = message.text or message.caption
   if "tera" in text or "box" in text:
        asyncio.create_task(terabox_func(client, message))
+  else:
+    return await message.reply_text("Send Only Terabox Urls", quote=True)
 
 
 def box_fil(_, __, message):
