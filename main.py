@@ -220,7 +220,7 @@ async def terabox_func(client, message):
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id
                          await store_file(unique_id, file_id)
-                         direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
+                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                          await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -236,7 +236,7 @@ async def terabox_func(client, message):
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
-                               direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
+                               direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                             else:
                                 await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
@@ -250,7 +250,7 @@ async def terabox_func(client, message):
                              file_id = ril.document.file_id
                              unique_id = ril.document.file_unique_id
                              await store_file(unique_id, file_id)
-                             direct_url = f"https://t.me/terabox_down_bot?start=unqid{unique_id}"
+                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                              await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                            except Exception as e: 
                              print(e)
