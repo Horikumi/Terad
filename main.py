@@ -307,8 +307,8 @@ async def terabox_dm(client, message):
                             if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, url, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                               dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
-                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=dur, caption="Indian")
+                        #       dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
+                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
                                file_id = ril.video.file_id
                                unique_id = ril.video.file_unique_id
                                await store_file(unique_id, file_id)
