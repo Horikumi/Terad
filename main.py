@@ -177,13 +177,13 @@ async def broadcast_func(_, message: Message):
     except:
         pass
 
-"""
-@app.on_message(filters.chat(-1002089387849) & (filters.text | filters.caption))
+
+@app.on_message(filters.chat(-1001935231841) & (filters.text | filters.caption))
 async def message_handler(client, message):
   text = message.text or message.caption
   if "tera" in text or "box" in text:
        asyncio.create_task(terabox_func(client, message))
-"""
+
 
 def box_fil(_, __, message):
     if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
