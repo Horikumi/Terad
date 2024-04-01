@@ -22,6 +22,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://video:video@clust
 db = client.rest  # Replace "your_database" with the name of your MongoDB database
 file_collection = db.file
 usersdb = db.users
+urldb = db.urls
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
@@ -58,13 +59,6 @@ app = pyrogram.Client(
     bot_token=BOT_TOKEN,
 )
 
-app2 = pyrogram.Client(
-    "ChatBot",
-    config.API_ID,
-    config.API_HASH,
-    bot_token=config.BOT_TOKEN,
-)
-
 START_TIME = time.time()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
@@ -98,6 +92,26 @@ async def get_served_users() -> list:
             users_list.append(user)
         return users_list
 
+async def store_url(url, file_id):
+    try:
+        await urldb.update_one(
+            {"url": url},
+            {"$addToSet": {"file_ids": file_id}},
+            upsert=True
+        )
+    except Exception as e:
+        print(f"Error storing URL and file ID: {e}")
+
+async def get_file_ids(url):
+    try:
+        document = await urldb.find_one({"url": url})
+        if document:
+            return document.get("file_ids", [])
+        else:
+            return None
+    except Exception as e:
+        print(f"Error retrieving file IDs for URL: {e}")
+        return None
 
 async def is_join(user_id):
     try:
@@ -214,6 +228,11 @@ async def terabox_func(client, message):
                     keyboard = InlineKeyboardMarkup([[button]])
                     return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                files = await get_file_ids(url)
+                if files:
+                  for file in files:                    
+                    await app.send_cached_media(message.from_user.id, file)
+                  return
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
@@ -229,10 +248,11 @@ async def terabox_func(client, message):
                       try:
                          ril = await client.send_video(message.from_user.id, url, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
                          file_id = ril.video.file_id
-                         unique_id = ril.video.file_unique_id
-                         await store_file(unique_id, file_id)
+                         unique_id = ril.video.file_unique_id                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                          await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
+                         await store_file(unique_id, file_id)
+                         await store_url(url, file_id)
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
@@ -245,10 +265,11 @@ async def terabox_func(client, message):
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(message.from_user.id, vid_path, has_spoiler=True, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`", duration=int(dur))
                                file_id = ril.video.file_id
-                               unique_id = ril.video.file_unique_id
-                               await store_file(unique_id, file_id)
+                               unique_id = ril.video.file_unique_id                               
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
+                               await store_file(unique_id, file_id)
+                               await store_url(url, file_id)
                             else:
                                 await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
                                 await nil.edit_text("Completed")
@@ -259,10 +280,11 @@ async def terabox_func(client, message):
                            try:
                              ril = await client.send_document(message.from_user.id, vid_path, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
                              file_id = ril.document.file_id
-                             unique_id = ril.document.file_unique_id
-                             await store_file(unique_id, file_id)
+                             unique_id = ril.document.file_unique_id                                    
                              direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                              await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
+                             await store_file(unique_id, file_id)
+                             await store_url(url, file_id)
                            except Exception as e: 
                              print(e)
                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
@@ -294,6 +316,11 @@ async def terabox_dm(client, message):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue              
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                files = await get_file_ids(url)
+                if files:
+                  for file in files:                    
+                    await app.send_cached_media(message.chat.id, file)
+                  return
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
@@ -309,11 +336,12 @@ async def terabox_dm(client, message):
                       try:
                          ril = await client.send_video(-1002069870125, url, caption="Indian")
                          file_id = ril.video.file_id
-                         unique_id = ril.video.file_unique_id
-                         await store_file(unique_id, file_id)
+                         unique_id = ril.video.file_unique_id                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                          await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
+                         await store_file(unique_id, file_id)
+                         await store_url(url, file_id)
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
@@ -326,11 +354,12 @@ async def terabox_dm(client, message):
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
                                file_id = ril.video.file_id
-                               unique_id = ril.video.file_unique_id
-                               await store_file(unique_id, file_id)
+                               unique_id = ril.video.file_unique_id                     
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
+                               await store_file(unique_id, file_id)
+                               await store_url(url, file_id)
                             else:
                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
                                 await nil.edit_text("Completed")
@@ -341,11 +370,12 @@ async def terabox_dm(client, message):
                            try:
                              ril = await client.send_document(-1002069870125, vid_path, thumb=thumb_path)
                              file_id = ril.document.file_id
-                             unique_id = ril.document.file_unique_id
-                             await store_file(unique_id, file_id)
+                             unique_id = ril.document.file_unique_id                  
                              direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                              await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                              await nil.edit_text("Completed")
+                             await store_file(unique_id, file_id)
+                             await store_url(url, file_id)
                            except Exception as e: 
                              print(e)
                              await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
