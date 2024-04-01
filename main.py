@@ -216,6 +216,9 @@ async def terabox_func(client, message):
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
+                   if link_data is None:
+                       await message.reply_text("No download link available for this URL", quote=True)
+                       continue
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
@@ -293,6 +296,9 @@ async def terabox_dm(client, message):
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
+                   if link_data is None:
+                       await message.reply_text("No download link available for this URL", quote=True)
+                       continue
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
