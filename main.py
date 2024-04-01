@@ -243,10 +243,10 @@ async def terabox_func(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, url, thumb  = await get_data(link)
-                    if url:
+                    name, size, dlink, thumb  = await get_data(link)
+                    if dlink:
                       try:
-                         ril = await client.send_video(message.from_user.id, url, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
+                         ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
@@ -260,7 +260,7 @@ async def terabox_func(client, message):
                          try:
                             size_bytes = humanfriendly.parse_size(size)
                             if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
-                               vid_path = await loop.run_in_executor(None, download_file, url, name)
+                               vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(message.from_user.id, vid_path, has_spoiler=True, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`", duration=int(dur))
@@ -271,7 +271,7 @@ async def terabox_func(client, message):
                                await store_file(unique_id, file_id)
                                await store_url(url, file_id)
                             else:
-                                await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
+                                await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
                                 await nil.edit_text("Completed")
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
@@ -287,7 +287,7 @@ async def terabox_func(client, message):
                              await store_url(url, file_id)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
+                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
@@ -331,10 +331,10 @@ async def terabox_dm(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, url, thumb  = await get_data(link)
-                    if url:
+                    name, size, dlink, thumb  = await get_data(link)
+                    if dlink:
                       try:
-                         ril = await client.send_video(-1002069870125, url, caption="Indian")
+                         ril = await client.send_video(-1002069870125, dlink, caption="Indian")
                          file_id = ril.video.file_id
                          unique_id = ril.video.file_unique_id                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
@@ -349,7 +349,7 @@ async def terabox_dm(client, message):
                          try:
                             size_bytes = humanfriendly.parse_size(size)
                             if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
-                               vid_path = await loop.run_in_executor(None, download_file, url, name)
+                               vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
@@ -361,7 +361,7 @@ async def terabox_dm(client, message):
                                await store_file(unique_id, file_id)
                                await store_url(url, file_id)
                             else:
-                                await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
+                                await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
                                 await nil.edit_text("Completed")
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
@@ -378,7 +378,7 @@ async def terabox_dm(client, message):
                              await store_url(url, file_id)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {url}")
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
