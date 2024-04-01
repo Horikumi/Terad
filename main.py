@@ -231,11 +231,7 @@ async def terabox_func(client, message):
                 files = await get_file_ids(url)
                 if files:
                   for file in files:                    
-                    cil = await app.send_cached_media(message.from_user.id, file)
-                    tok = cil.video if cil.video else cil.document                    
-                    unique_id = tok.file_unique_id
-                    direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                    await cil.edit_caption(caption=f"**Direct File Link**: {direct_url}")
+                    await app.send_cached_media(message.from_user.id, file)
                   return
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -320,13 +316,10 @@ async def terabox_dm(client, message):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue              
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                files = await get_file_ids(url)
                 if files:
                   for file in files:                    
-                    cil = await app.send_cached_media(message.chat.id, file)
-                    tok = cil.video if cil.video else cil.document                    
-                    unique_id = tok.file_unique_id
-                    direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                    await cil.edit_caption(caption=f"**Direct File Link**: {direct_url}")
+                    await app.send_cached_media(message.chat.id, file)
                   return
                 try:
                    link_data = await fetch_download_link_async(url)
