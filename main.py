@@ -214,7 +214,12 @@ async def terabox_func(client, message):
                     keyboard = InlineKeyboardMarkup([[button]])
                     return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                link_data = await fetch_download_link_async(url)
+                try:
+                   link_data = await fetch_download_link_async(url)
+                except Exception as e:
+                   print(e)
+                   await message.reply_text("Some Error Occurred", quote=True)
+                   continue 
                 for link in link_data:
                     name, size, url, thumb  = await get_data(link)
                     if url:
@@ -286,7 +291,12 @@ async def terabox_dm(client, message):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue              
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                link_data = await fetch_download_link_async(url)
+                try:
+                   link_data = await fetch_download_link_async(url)
+                except Exception as e:
+                   print(e)
+                   await message.reply_text("Some Error Occurred", quote=True)
+                   continue 
                 for link in link_data:
                     name, size, url, thumb  = await get_data(link)
                     if url:
