@@ -240,7 +240,7 @@ async def terabox_func(client, message):
                 if files:
                   for file, link in files:                    
                     await app.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
-                  return
+                  continue
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -328,7 +328,7 @@ async def terabox_dm(client, message):
                 if files:
                   for file, link in files:                    
                     await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                  return
+                  continue
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
