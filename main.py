@@ -231,13 +231,13 @@ async def terabox_func(client, message):
                 except:
                     button = InlineKeyboardButton("Click Here", url="https://t.me/teradlrobot?start=True")
                     keyboard = InlineKeyboardMarkup([[button]])
-                    return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                    return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)                
                 files = await get_file_ids(url)
                 if files:
                   for file in files:                    
                     await app.send_cached_media(message.from_user.id, file)
                   return
+                nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
@@ -319,13 +319,13 @@ async def terabox_dm(client, message):
             for url in urls:
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue              
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                    continue                              
                 files = await get_file_ids(url)
                 if files:
                   for file in files:                    
                     await app.send_cached_media(message.chat.id, file)
                   return
+                nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
