@@ -28,6 +28,8 @@ API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
 BOT_TOKEN = "7121574962:AAEykm0e0I6q258JZHtLBc_6irb86_z1zNs"
 
+queue_url = {}
+
 def get_readable_time(seconds: int) -> str:
     count = 0
     readable_time = ""
@@ -241,6 +243,12 @@ async def terabox_func(client, message):
                   for file, link in files:                    
                     await app.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
                   continue
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -308,6 +316,10 @@ async def terabox_func(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
+        finally:
+            if user_id in queue_url:
+                 del queue_url[user_id]
+
 
 
 async def terabox_dm(client, message):
@@ -328,7 +340,13 @@ async def terabox_dm(client, message):
                 if files:
                   for file, link in files:                    
                     await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                  continue
+                  continue                
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -399,7 +417,10 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-           	
+        finally:
+            if user_id in queue_url:
+                del queue_url[user_id]
+
 
 async def init():
     await app.start()
