@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
+from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, shorten_url
 from pyrogram.errors import FloodWait, UserNotParticipant
 uvloop.install()
 import motor.motor_asyncio
@@ -288,7 +288,8 @@ async def terabox_func(client, message):
                                await store_file(unique_id, file_id)
                                await store_url(url, file_id, unique_id, direct_url)
                             else:
-                                await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                                short_link = await shorten_url(dlink)
+                                await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {short_link}")
                                 await nil.edit_text("Completed")
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
@@ -304,7 +305,8 @@ async def terabox_func(client, message):
                              await store_url(url, file_id, unique_id, direct_url)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             short_link = await shorten_url(dlink)
+                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {short_link}")
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
@@ -388,7 +390,8 @@ async def terabox_dm(client, message):
                                await store_file(unique_id, file_id)
                                await store_url(url, file_id, unique_id, direct_url)
                             else:
-                                await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                                short_link = await shorten_url(dlink)
+                                await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {short_link}")
                                 await nil.edit_text("Completed")
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
@@ -405,7 +408,8 @@ async def terabox_dm(client, message):
                              await store_url(url, file_id, unique_id, direct_url)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             short_link = await shorten_url(dlink)
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {short_link}")
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
