@@ -315,3 +315,22 @@ async def find_between(string, start, end):
     start_index = string.find(start) + len(start)
     end_index = string.find(end, start_index)
     return string[start_index:end_index]
+
+async def shorten_url(long_url):
+    api_key = '26LFT5xlnvMbhEwux1LCDvftvss2'
+    api_url = f"https://api.shareus.io/easy_api?key={api_key}&link={long_url}"
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url) as response:
+                if response.status == 200:
+                    data = await response.text()
+                    return data.strip()  # Remove any extra whitespace
+                else:
+                    print(f"Failed to shorten URL. Status code: {response.status}")
+                    return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+      
+
+      
