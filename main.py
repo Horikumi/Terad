@@ -278,7 +278,9 @@ async def terabox_func(client, message):
                              await store_file(unique_id, file_id)
                              await store_url(url, file_id, unique_id, direct_url)
                          else:
-                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                              play_url = f"https://eldest-mame-satvik.koyeb.app/video?video={dlink}"
+                              buttn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=play_url))
+                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}", reply_markup=InlineKeyboardMarkup([[buttn]]))
                               await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -309,7 +311,9 @@ async def terabox_func(client, message):
                              await store_url(url, file_id, unique_id, direct_url)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             play_url = f"https://eldest-mame-satvik.koyeb.app/video?video={dlink}"
+                             buttn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=play_url))
+                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}", reply_markup=InlineKeyboardMarkup([[buttn]]))
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
@@ -380,7 +384,9 @@ async def terabox_dm(client, message):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             play_url = f"https://eldest-mame-satvik.koyeb.app/video?video={dlink}"
+                             buttn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=play_url))
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}", reply_markup=InlineKeyboardMarkup([[buttn]]))
                              await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -413,7 +419,9 @@ async def terabox_dm(client, message):
                              await store_url(url, file_id, unique_id, direct_url)
                            except Exception as e: 
                              print(e)
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             play_url = f"https://eldest-mame-satvik.koyeb.app/video?video={dlink}"
+                             buttn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=play_url))
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}", reply_markup=InlineKeyboardMarkup([[buttn]]))
                              await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
