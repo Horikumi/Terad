@@ -322,6 +322,7 @@ async def terabox_func(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
         finally:
+            user_id = int(message.from_user.id)
             if user_id in queue_url:
                  del queue_url[user_id]
 
@@ -425,6 +426,7 @@ async def terabox_dm(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
         finally:
+            user_id = int(message.from_user.id)
             if user_id in queue_url:
                 del queue_url[user_id]
 
