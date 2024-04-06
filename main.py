@@ -13,7 +13,7 @@ from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
 from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
-from pyrogram.errors import FloodWait, UserNotParticipant
+from pyrogram.errors import FloodWait, UserNotParticipant, WebPageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
 loop = asyncio.get_event_loop()
@@ -240,8 +240,13 @@ async def terabox_func(client, message):
                     return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)                
                 files = await get_file_ids(url)
                 if files:
-                  for file, link in files:                    
-                    await app.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
+                  for file, link in files:
+                    try:
+                       await app.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
+                    except FloodWait as e:
+                       await asyncio.sleep(e.value)
+                    except Exception as e:
+                       continue
                   continue
                 user_id = int(message.from_user.id)
                 if user_id in queue_url and str(url) in queue_url[user_id]:
@@ -263,20 +268,23 @@ async def terabox_func(client, message):
                     name, size, dlink, thumb  = await get_data(link)
                     if dlink:
                       try:
-                         ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
-                         file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                         unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
-                         await store_file(unique_id, file_id)
-                         await store_url(url, file_id, unique_id, direct_url)
+                         size_bytes = humanfriendly.parse_size(size)
+                         if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                             ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
+                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
+                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                             await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
+                             await store_file(unique_id, file_id)
+                             await store_url(url, file_id, unique_id, direct_url)
+                         else:
+                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                              await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
                          print(e)
                          try:
-                            size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
@@ -286,10 +294,7 @@ async def terabox_func(client, message):
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                                await store_file(unique_id, file_id)
-                               await store_url(url, file_id, unique_id, direct_url)
-                            else:
-                                await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
-                                await nil.edit_text("Completed")
+                               await store_url(url, file_id, unique_id, direct_url)                       
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
@@ -335,8 +340,13 @@ async def terabox_dm(client, message):
                     continue                              
                 files = await get_file_ids(url)
                 if files:
-                  for file, link in files:                   
-                    await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                  for file, link in files:
+                    try:
+                       await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                    except FloodWait as e:
+                      await asyncio.sleep(e.value)
+                    except Exception as e:
+                       continue
                   continue                
                 user_id = int(message.from_user.id)
                 if user_id in queue_url and str(url) in queue_url[user_id]:
