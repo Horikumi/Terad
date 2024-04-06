@@ -127,7 +127,7 @@ async def get_file_ids(url):
 async def is_join(user_id):
     try:
         await app.get_chat_member(-1001885839902, user_id)  
-        await app.get_chat_member(-1001922006659, user_id)
+   #     await app.get_chat_member(-1001922006659, user_id)
         return True
     except UserNotParticipant:
         return False  
@@ -276,7 +276,7 @@ async def terabox_func(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
@@ -323,11 +323,8 @@ async def terabox_func(client, message):
 
 
 async def terabox_dm(client, message):
-        is_served = await usersdb.find_one({"user_id": message.chat.id})
-        if not is_served:
-            return await message.reply_text("Type /start first then try sending url again")
         if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup and @CheemsChat before using me")
+            return await message.reply_text("you need to join @CheemsBackup before using me")
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
@@ -338,7 +335,7 @@ async def terabox_dm(client, message):
                     continue                              
                 files = await get_file_ids(url)
                 if files:
-                  for file, link in files:                    
+                  for file, link in files:                   
                     await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
                   continue                
                 user_id = int(message.from_user.id)
@@ -375,7 +372,7 @@ async def terabox_dm(client, message):
                          print(e)
                          try:
                             size_bytes = humanfriendly.parse_size(size)
-                            if int(size_bytes) < 900 * 1024 * 1024 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                            if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                                dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
