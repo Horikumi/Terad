@@ -13,7 +13,7 @@ from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
 from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
-from pyrogram.errors import FloodWait, UserNotParticipant, WebPageCurlFailed, MediaEmpty
+from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
 loop = asyncio.get_event_loop()
