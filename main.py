@@ -265,10 +265,9 @@ async def terabox_func(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, dlink, thumb  = await get_data(link)
+                    name, size, size_bytes, dlink, thumb  = await get_data(link)
                     if dlink:
-                      try:
-                         size_bytes = humanfriendly.parse_size(size)
+                      try:                         
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                              ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
                              file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
@@ -366,10 +365,9 @@ async def terabox_dm(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, dlink, thumb  = await get_data(link)
+                    name, size, size_bytes, dlink, thumb  = await get_data(link)
                     if dlink:
-                      try:
-                         size_bytes = humanfriendly.parse_size(size)
+                      try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                             ril = await client.send_video(-1002069870125, dlink, caption="Indian")
                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
