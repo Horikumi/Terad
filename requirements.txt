@@ -1,7 +1,7 @@
-asyncio
+ asyncio
 dnspython
 motor
-pyrogram
+pyrofork
 python-dotenv
 tgcrypto
 gunicorn
