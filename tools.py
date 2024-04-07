@@ -1,7 +1,7 @@
 import asyncio, re, random, aiohttp, uuid, os
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import pyshorteners 
+import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
