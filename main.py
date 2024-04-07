@@ -224,10 +224,6 @@ async def private_message_handler(client, message):
 
 
 async def terabox_func(client, message):
-        user_id = int(message.from_user.id)
-        if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-        queue_url[user_id] = True
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
@@ -251,7 +247,13 @@ async def terabox_func(client, message):
                        await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
-                  continue               
+                  continue
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -318,7 +320,8 @@ async def terabox_func(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:            
+        finally:
+            user_id = int(message.from_user.id)
             if user_id in queue_url:
                  del queue_url[user_id]
 
@@ -327,10 +330,6 @@ async def terabox_func(client, message):
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
-        user_id = int(message.from_user.id)
-        if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-        queue_url[user_id] = True
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
@@ -349,6 +348,12 @@ async def terabox_dm(client, message):
                     except Exception as e:
                        continue
                   continue                
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -419,6 +424,7 @@ async def terabox_dm(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
         finally:
+            user_id = int(message.from_user.id)
             if user_id in queue_url:
                 del queue_url[user_id]
 
