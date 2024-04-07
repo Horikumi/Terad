@@ -1,7 +1,7 @@
 import asyncio, re, random, aiohttp, uuid, os
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import humanfriendly, pyshorteners 
+import pyshorteners 
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
@@ -249,10 +249,10 @@ async def get_data(link_data):
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
     download_link = rapi.tinyurl.short(download_link)
     thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, download_link, thumb
+    return file_name, file_size, link_data["size"], download_link, thumb
   except Exception as e:
     print(e)
-    return None, None, None, None
+    return None, None, None, None, None
 
 def extract_links(message):
     # fetch all links
