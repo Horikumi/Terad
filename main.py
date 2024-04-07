@@ -6,7 +6,7 @@ from pyrogram import __version__ as pyrover
 from pyrogram import filters, idle
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
-import pyrogram, asyncio, os, uvloop, humanfriendly, time
+import pyrogram, asyncio, os, uvloop, time
 from pyrogram import Client, filters, idle, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
