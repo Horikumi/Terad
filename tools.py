@@ -61,7 +61,7 @@ def download_file(url, file_path, retry_count=0):
                         break
         return file_path 
     except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
-        if retry_count < 2: 
+        if retry_count < 3: 
             print(f"Retrying... (Attempt {retry_count + 1})")
             return download_file(url, file_path, retry_count + 1)
         else:
