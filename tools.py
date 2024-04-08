@@ -143,8 +143,11 @@ async def extract_link(message):
             return first_url
         else:
             return None
+    except Exception as e:
+     	print(e)
+     	return None
 
-        
+                
 async def extract_surl_from_url(url: str):
     parsed_url = urlparse(url)
     query_params = parse_qs(parsed_url.query)
