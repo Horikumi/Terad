@@ -233,8 +233,7 @@ async def terabox_func(client, message):
                     return await message.reply_text("Only One Url at a Time")                 
                 queue_url[user_id] = True            
                 if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue
+                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                 
                 try:
                     await app.send_message(message.from_user.id, ".")
                 except:
@@ -250,17 +249,15 @@ async def terabox_func(client, message):
                        await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
-                  continue               
+                  return               
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    name, dlink, thumb, size, size_bytes, tiny = await get_data(url)
                    if not dlink:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
+                       return await message.reply_text("No download link available for this URL", quote=True)                       
                 except Exception as e:
                    print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue
+                   return await message.reply_text("Some Error Occurred", quote=True)                  
                 if dlink:
                       try:                         
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
@@ -323,8 +320,7 @@ async def terabox_dm(client, message):
                     return await message.reply_text("Only One Url at a Time")                 
                 queue_url[user_id] = True                
                 if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue                              
+                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                                                  
                 files = await get_file_ids(url)
                 if files:
                   for file, link in files:
@@ -333,18 +329,16 @@ async def terabox_dm(client, message):
                     except FloodWait as e:
                       await asyncio.sleep(e.value)
                     except Exception as e:
-                       continue
-                  continue                
+                       continue 
+                  return               
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    name, dlink, thumb, size, size_bytes, tiny = await get_data(url)
                    if not dlink:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
+                      return await message.reply_text("No download link available for this URL", quote=True)                  
                 except Exception as e:
                    print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue               
+                   return await message.reply_text("Some Error Occurred", quote=True)
                 if dlink:
                       try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
