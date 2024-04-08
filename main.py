@@ -223,15 +223,15 @@ async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
 
-async def terabox_func(client, message):
-        user_id = int(message.from_user.id)
-        if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-        queue_url[user_id] = True
+async def terabox_func(client, message):       
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
         try:
+            user_id = int(message.from_user.id)
+            if user_id in queue_url:
+                return await message.reply_text("Only One Url at a Time")                 
+            queue_url[user_id] = True
             for url in urls:
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
@@ -326,15 +326,15 @@ async def terabox_func(client, message):
 
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup before using me")
-        user_id = int(message.from_user.id)
-        if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-        queue_url[user_id] = True
+            return await message.reply_text("you need to join @CheemsBackup before using me")        
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
         try:
+            user_id = int(message.from_user.id)
+            if user_id in queue_url:
+                return await message.reply_text("Only One Url at a Time")                 
+            queue_url[user_id] = True
             for url in urls:
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
