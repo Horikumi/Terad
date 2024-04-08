@@ -279,5 +279,5 @@ async def get_data(url: str):
         "sizebytes": int(r_j["list"][0]["size"]),
         "tinyurl": tiny, 
     }
-    return data
+    return data['file_name'], data['direct_link'], data['thumb'], data['size'], data['sizebytes'], data['tinyurl']
      
