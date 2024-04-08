@@ -279,7 +279,7 @@ async def terabox_func(client, message):
                              await store_file(unique_id, file_id)
                              await store_url(url, file_id, unique_id, direct_url)
                          else:
-                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                               await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -299,19 +299,9 @@ async def terabox_func(client, message):
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
-                           print(e)
-                           try:
-                             ril = await client.send_document(message.from_user.id, vid_path, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
-                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                                    
-                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                             await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
-                             await store_file(unique_id, file_id)
-                             await store_url(url, file_id, unique_id, direct_url)
-                           except Exception as e: 
-                             print(e)
-                             await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
-                             await nil.edit_text("Completed")
+                           print(e)                          
+                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
+                           await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
                                    os.remove(vid_path)
@@ -380,7 +370,7 @@ async def terabox_dm(client, message):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                              await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -401,20 +391,9 @@ async def terabox_dm(client, message):
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
-                           print(e)
-                           try:
-                             ril = await client.send_document(-1002069870125, vid_path, thumb=thumb_path)
-                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                  
-                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                             await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                             await nil.edit_text("Completed")
-                             await store_file(unique_id, file_id)
-                             await store_url(url, file_id, unique_id, direct_url)
-                           except Exception as e: 
-                             print(e)
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
-                             await nil.edit_text("Completed")
+                           print(e)                     
+                           await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
+                           await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
                                    os.remove(vid_path)
