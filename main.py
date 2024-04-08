@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
+from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -96,6 +96,7 @@ async def get_served_users() -> list:
 
 async def store_url(url, file_id, unique_id, direct_link):
     try:
+        url = await extract_code(url)
         document = await urldb.find_one({"url": url})
         if document and unique_id not in document.get("unique_ids", []):
             await urldb.update_one(
@@ -111,6 +112,7 @@ async def store_url(url, file_id, unique_id, direct_link):
 
 async def get_file_ids(url):
     try:
+        url = await extract_code(url)
         document = await urldb.find_one({"url": url})
         if document:
             file_ids = document.get("file_ids", [])
