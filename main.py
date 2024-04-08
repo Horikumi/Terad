@@ -224,15 +224,14 @@ async def private_message_handler(client, message):
 
 
 async def terabox_func(client, message):       
-        urls = extract_links(message.text)
-        if not urls:
+        url = extract_links(message.text)
+        if not url:
           return await message.reply_text("No Urls Found")
         try:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-            queue_url[user_id] = True
-            for url in urls:
+                user_id = int(message.from_user.id)
+                if user_id in queue_url:
+                    return await message.reply_text("Only One Url at a Time")                 
+                queue_url[user_id] = True            
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue
@@ -254,17 +253,15 @@ async def terabox_func(client, message):
                   continue               
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
+                   name, dlink, thumb, size, size_bytes, tiny = await get_data(url)
+                   if not dlink:
                        await message.reply_text("No download link available for this URL", quote=True)
                        continue
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
+                   continue
+                if dlink:
                       try:                         
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                              ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
@@ -275,7 +272,7 @@ async def terabox_func(client, message):
                              await store_file(unique_id, file_id)
                              await store_url(url, file_id, unique_id, direct_url)
                          else:
-                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                               await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -296,7 +293,7 @@ async def terabox_func(client, message):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                          
-                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
@@ -340,15 +337,14 @@ async def terabox_dm(client, message):
                   continue                
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
-                   link_data = await get_data(url)
-                   if not link_data:
+                   name, dlink, thumb, size, size_bytes, tiny = await get_data(url)
+                   if not dlink:
                        await message.reply_text("No download link available for this URL", quote=True)
                        continue
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                name, dlink, thumb, size, size_bytes, tiny = await get_data(link)
+                   continue               
                 if dlink:
                       try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
