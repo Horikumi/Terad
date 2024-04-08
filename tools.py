@@ -134,7 +134,7 @@ def get_duration(file_path):
     return None
 
 
-def extract_link(message):
+async def extract_link(message):
     try:
         url_pattern = r'https?://\S+'
         match = re.search(url_pattern, message)
