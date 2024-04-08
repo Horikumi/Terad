@@ -30,6 +30,7 @@ async def update_progress(downloaded, total, message, state="Uploading"):
     except Exception as e:
         print(e)
         pass
+      
 
 """
 def download_file(url: str, filename):
@@ -144,7 +145,16 @@ def extract_links(message):
         print(f"Error extracting links: {e}")
         return []
         
+async def extract_surl_from_url(url: str):
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    surl = query_params.get("surl", [])
 
+    if surl:
+        return surl[0]
+    else:
+        return False
+      
 async def get_formatted_size_async(size_bytes):
     try:
         size_bytes = int(size_bytes)
@@ -211,7 +221,7 @@ async def shorten_url(long_url):
         print(f"An error occurred: {e}")
         return None
              
-async def get_data(url: str, cookie: str):
+async def get_data(url: str):
     headersList = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Encoding": "gzip, deflate, br",
@@ -270,15 +280,4 @@ async def get_data(url: str, cookie: str):
         "tinyurl": tiny, 
     }
     return data
-
-async def extract_surl_from_url(url: str):
-    parsed_url = urlparse(url)
-    query_params = parse_qs(parsed_url.query)
-    surl = query_params.get("surl", [])
-
-    if surl:
-        return surl[0]
-    else:
-        return False
-      
-      
+     
