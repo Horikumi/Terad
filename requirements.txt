@@ -1,7 +1,7 @@
 asyncio
 dnspython
 motor
-pyrofork
+pyrogram==2.0.106
 python-dotenv
 tgcrypto
 gunicorn
