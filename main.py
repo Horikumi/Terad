@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
+from tools import get_data, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -228,10 +228,10 @@ async def terabox_func(client, message):
         if not url:
           return await message.reply_text("No Url Found")
         try:
-         #       user_id = int(message.from_user.id)
-           #     if user_id in queue_url:
-             #       return await message.reply_text("Only One Url at a Time")                 
-               # queue_url[user_id] = True            
+                user_id = int(message.from_user.id)
+                if user_id in queue_url:
+                    return await message.reply_text("Only One Url at a Time")                 
+                queue_url[user_id] = True            
                 if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                 
                 try:
@@ -267,8 +267,7 @@ async def terabox_func(client, message):
                              direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                              await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                              await store_file(unique_id, file_id)
-                             lol = await extract_code(url)
-                             await store_url(lol, file_id, unique_id, direct_url)
+                             await store_url(url, file_id, unique_id, direct_url)
                          else:
                               await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                               await nil.edit_text("Completed")
@@ -286,8 +285,7 @@ async def terabox_func(client, message):
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                                await store_file(unique_id, file_id)
-                               lol = await extract_code(url)
-                               await store_url(lol, file_id, unique_id, direct_url)                       
+                               await store_url(url, file_id, unique_id, direct_url)                       
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
@@ -304,9 +302,9 @@ async def terabox_func(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-      #  finally:            
-        #    if user_id in queue_url:
-            #     del queue_url[user_id]
+        finally:            
+            if user_id in queue_url:
+                 del queue_url[user_id]
 
 
 
@@ -317,10 +315,10 @@ async def terabox_dm(client, message):
         if not url:
           return await message.reply_text("No Url Found")
         try:
-         #       user_id = int(message.from_user.id)
-           #     if user_id in queue_url:
-            #        return await message.reply_text("Only One Url at a Time")                 
-              #  queue_url[user_id] = True                
+                user_id = int(message.from_user.id)
+                if user_id in queue_url:
+                    return await message.reply_text("Only One Url at a Time")                 
+                queue_url[user_id] = True                
                 if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                                                  
                 files = await get_file_ids(url)
@@ -351,8 +349,7 @@ async def terabox_dm(client, message):
                             await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                             await nil.edit_text("Completed")
                             await store_file(unique_id, file_id)
-                            lol = await extract_code(url)
-                            await store_url(lol, file_id, unique_id, direct_url)
+                            await store_url(url, file_id, unique_id, direct_url)
                          else:
                              await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                              await nil.edit_text("Completed")                     
@@ -371,8 +368,7 @@ async def terabox_dm(client, message):
                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
                                await store_file(unique_id, file_id)
-                               lol = await extract_code(url)
-                               await store_url(lol, file_id, unique_id, direct_url)
+                               await store_url(url, file_id, unique_id, direct_url)
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
@@ -389,9 +385,9 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-      #  finally:
-       #     if user_id in queue_url:
-         #       del queue_url[user_id]
+        finally:
+            if user_id in queue_url:
+                del queue_url[user_id]
 
 
 async def init():
