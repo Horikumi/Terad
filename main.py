@@ -222,7 +222,7 @@ box_filter = filters.create(box_fil)
 
 @app.on_message(box_filter)
 async def private_message_handler(client, message):
-        asyncio.create_task(terabox_dm(client, message))
+        asyncio.create_task(teraboxdm_process(client, message))
 
 
 async def terabox_func(client, message):
@@ -320,7 +320,7 @@ async def terabox_func(client, message):
 
 async def teraboxdm_process(client, message):
     queue_list.append(message)
-    await message.reply_text(f"Your Process has been added to the global queue.\n\nQueue length: {len(queue_list)}")
+    return await message.reply_text(f"Your Process has been added to the global queue.\n\nQueue length: {len(queue_list)}")
   
 
 async def queuedm_processor(client):
@@ -328,10 +328,13 @@ async def queuedm_processor(client):
         if queue_list:
             while queue_list:
                 message = queue_list.pop(0)
-                await terabox_dm(client, message)  # Process the message
-                await asyncio.sleep(1)
-
-
+                try:
+                   await terabox_dm(client, message)
+                   await asyncio.sleep(1)
+                except Exception as e:
+                   print(e)
+                
+              
      
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
