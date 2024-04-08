@@ -318,7 +318,21 @@ async def terabox_func(client, message):
                  del queue_url[user_id]
 
 
+async def teraboxdm_process(client, message):
+    queue_list.append(message)
+    await message.reply_text(f"Your Process has been added to the global queue.\n\nQueue length: {len(queue_list)}")
+  
 
+async def queuedm_processor(client):
+    while True:
+        if queue_list:
+            while queue_list:
+                message = queue_list.pop(0)
+                await terabox_dm(client, message)  # Process the message
+                await asyncio.sleep(1)
+
+
+     
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
@@ -334,18 +348,12 @@ async def terabox_dm(client, message):
                 if files:
                   for file, link in files:
                     try:
-                       await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                       await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
                     except FloodWait as e:
                       await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
                   continue                
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        return await message.reply_text("This Url is Already In Process Wait")
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -404,14 +412,12 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                del queue_url[user_id]
+        
 
 
 async def init():
     await app.start()
+    asyncio.create_task(queuedm_processor(app))
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
