@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
+from tools import get_data, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -267,7 +267,8 @@ async def terabox_func(client, message):
                              direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                              await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                              await store_file(unique_id, file_id)
-                             await store_url(url, file_id, unique_id, direct_url)
+                             lol = await extract_code(url)
+                             await store_url(lol, file_id, unique_id, direct_url)
                          else:
                               await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                               await nil.edit_text("Completed")
@@ -285,7 +286,8 @@ async def terabox_func(client, message):
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
                                await store_file(unique_id, file_id)
-                               await store_url(url, file_id, unique_id, direct_url)                       
+                               lol = await extract_code(url)
+                               await store_url(lol, file_id, unique_id, direct_url)                       
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
@@ -349,7 +351,8 @@ async def terabox_dm(client, message):
                             await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                             await nil.edit_text("Completed")
                             await store_file(unique_id, file_id)
-                            await store_url(url, file_id, unique_id, direct_url)
+                            lol = await extract_code(url)
+                            await store_url(lol, file_id, unique_id, direct_url)
                          else:
                              await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                              await nil.edit_text("Completed")                     
@@ -368,7 +371,8 @@ async def terabox_dm(client, message):
                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
                                await store_file(unique_id, file_id)
-                               await store_url(url, file_id, unique_id, direct_url)
+                               lol = await extract_code(url)
+                               await store_url(lol, file_id, unique_id, direct_url)
                          except FloodWait as e:
                               await asyncio.sleep(e.value)
                          except Exception as e:
