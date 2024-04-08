@@ -134,16 +134,16 @@ def get_duration(file_path):
     return None
 
 
-def extract_links(message):
-    # fetch all links
+def extract_link(message):
     try:
-        url_pattern = r'https?://\S+'        
-        matches = re.findall(url_pattern, message)
+        url_pattern = r'https?://\S+'
+        match = re.search(url_pattern, message)
+        if match:
+            first_url = match.group()
+            return first_url
+        else:
+            return None
 
-        return matches
-    except Exception as e:
-        print(f"Error extracting links: {e}")
-        return []
         
 async def extract_surl_from_url(url: str):
     parsed_url = urlparse(url)
