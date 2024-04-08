@@ -224,9 +224,9 @@ async def private_message_handler(client, message):
 
 
 async def terabox_func(client, message):       
-        url = extract_links(message.text)
+        url = extract_link(message.text)
         if not url:
-          return await message.reply_text("No Urls Found")
+          return await message.reply_text("No Url Found")
         try:
                 user_id = int(message.from_user.id)
                 if user_id in queue_url:
