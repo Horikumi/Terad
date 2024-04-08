@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
+from tools import get_data, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -317,15 +317,14 @@ async def terabox_func(client, message):
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")        
-        urls = extract_links(message.text)
-        if not urls:
+        url = extract_link(message.text)
+        if not url:
           return await message.reply_text("No Urls Found")
         try:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                return await message.reply_text("Only One Url at a Time")                 
-            queue_url[user_id] = True
-            for url in urls:
+                user_id = int(message.from_user.id)
+                if user_id in queue_url:
+                    return await message.reply_text("Only One Url at a Time")                 
+                queue_url[user_id] = True                
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue                              
@@ -341,17 +340,16 @@ async def terabox_dm(client, message):
                   continue                
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
+                   link_data = await get_data(url)
+                   if not link_data:
                        await message.reply_text("No download link available for this URL", quote=True)
                        continue
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
+                name, dlink, thumb, size, size_bytes, tiny = await get_data(link)
+                if dlink:
                       try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                             ril = await client.send_video(-1002069870125, dlink, caption="Indian")
@@ -363,7 +361,7 @@ async def terabox_dm(client, message):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                              await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -385,7 +383,7 @@ async def terabox_dm(client, message):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                          
-                           await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Link**: {dlink}")
+                           await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {tiny}")
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
