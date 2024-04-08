@@ -284,3 +284,13 @@ async def get_data(url: str):
     }
     return data['file_name'], data['direct_link'], data['thumb'], data['size'], data['sizebytes'], data['tinyurl']
      
+async def extract_code(url: str):
+    pattern1 = r"/s/(\w+)"
+    pattern2 = r"surl=(\w+)"
+    match = re.search(pattern1, url)
+    if match:
+        return match.group(1)
+    match = re.search(pattern2, url)
+    if match:
+        return match.group(1)
+    return url
