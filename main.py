@@ -230,10 +230,10 @@ async def terabox_func(client, message):
         if not url:
           return await message.reply_text("No Url Found")
         try:
-                user_id = int(message.from_user.id)
-                if user_id in queue_url:
-                    return await message.reply_text("Only One Url at a Time")                 
-                queue_url[user_id] = True            
+             #   user_id = int(message.from_user.id)
+            #    if user_id in queue_url:
+            #        return await message.reply_text("Only One Url at a Time")                 
+             #   queue_url[user_id] = True            
                 if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                 
                 try:
@@ -304,9 +304,9 @@ async def terabox_func(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:            
-            if user_id in queue_url:
-                 del queue_url[user_id]
+      #  finally:            
+         #   if user_id in queue_url:
+          #       del queue_url[user_id]
 
 
 
@@ -317,10 +317,10 @@ async def terabox_dm(client, message):
         if not url:
           return await message.reply_text("No Url Found")
         try:
-                user_id = int(message.from_user.id)
-                if user_id in queue_url:
-                    return await message.reply_text("Only One Url at a Time")                 
-                queue_url[user_id] = True                
+         #       user_id = int(message.from_user.id)
+             #   if user_id in queue_url:
+              #      return await message.reply_text("Only One Url at a Time")                 
+              #  queue_url[user_id] = True                
                 if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                                                  
                 files = await get_file_ids(url)
@@ -387,9 +387,9 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                del queue_url[user_id]
+     #   finally:
+      #      if user_id in queue_url:
+         #       del queue_url[user_id]
 
 
 async def init():
