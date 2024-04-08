@@ -4,12 +4,16 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
+from urllib.parse import parse_qs, urlparse
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
 
 download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
+
+cookie = 'browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; lang=en; __bid_n=18e3dd5bb2c9cb73434207; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __bid_n=18e8bfdfc3be4ea4224207; csrfToken=8JPIz5vKB7OFpUJPYTiUzWtW; ndus=Y23AA8KteHuisa-G0gHj13u4hy-0jpGBB1qMIP6j; ndut_fmt=068CF73643C0A6D33CA63114B295CD291FAE96FC359C85F7B519B6EB40AD2769; ab_sr=1.0.1_Y2Q2NzFmMjJjZjI2ZTIwY2Y1OGRmMjdkYjQ4NDNkYWE5ZjM4N2YwNDM4MjViZThmZWNhMDczYWQxMDNlNjVhNmRhMjEwNWNhMDk0M2Q2YjkzOTcyNDk1MjY0MTYwYTJmMmU4ZTZjOWJhNzRiODkxZjRkYmUzODg0ZjRmZjgwMWUzYTViMzQ3NDBmMzQzMGRiZjg5ZWM3YWZlODUzMDdjYQ==; ab_ymg_result={"data":"eb84d2c1e0bdeab29071677f50331dcf2c3ec7fb62a3feafc0f94cccf1b1ccaa34c5bc0d95e6e60a6b02b3d1577127ebfe85ff48d0f62ecbd8c0fea8b5eb38bcffac8cd6e82103ef074257509767fcbb3cd5db615d54b0eebe88148f78b786a885cecadd43c7a3c60b0d6569bda8e2c9966b647c77cbd9f7c88421c1f557d8b7","key_id":"66","sign":"2e10ba72"}; _ga_06ZNKL8C2E=GS1.1.1711745818.2.1.1711746308.15.0.0'
+
 
 async def update_progress(downloaded, total, message, state="Uploading"):
     try:
@@ -129,131 +133,6 @@ def get_duration(file_path):
     return None
 
 
-async def create_session():
-    headers = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'max-age=0',
-        'Connection': 'keep-alive',
-        'Cookie': 'browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; lang=en; __bid_n=18e3dd5bb2c9cb73434207; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __bid_n=18e8bfdfc3be4ea4224207; csrfToken=8JPIz5vKB7OFpUJPYTiUzWtW; ndus=Y23AA8KteHuisa-G0gHj13u4hy-0jpGBB1qMIP6j; ndut_fmt=068CF73643C0A6D33CA63114B295CD291FAE96FC359C85F7B519B6EB40AD2769; ab_sr=1.0.1_Y2Q2NzFmMjJjZjI2ZTIwY2Y1OGRmMjdkYjQ4NDNkYWE5ZjM4N2YwNDM4MjViZThmZWNhMDczYWQxMDNlNjVhNmRhMjEwNWNhMDk0M2Q2YjkzOTcyNDk1MjY0MTYwYTJmMmU4ZTZjOWJhNzRiODkxZjRkYmUzODg0ZjRmZjgwMWUzYTViMzQ3NDBmMzQzMGRiZjg5ZWM3YWZlODUzMDdjYQ==; ab_ymg_result={"data":"eb84d2c1e0bdeab29071677f50331dcf2c3ec7fb62a3feafc0f94cccf1b1ccaa34c5bc0d95e6e60a6b02b3d1577127ebfe85ff48d0f62ecbd8c0fea8b5eb38bcffac8cd6e82103ef074257509767fcbb3cd5db615d54b0eebe88148f78b786a885cecadd43c7a3c60b0d6569bda8e2c9966b647c77cbd9f7c88421c1f557d8b7","key_id":"66","sign":"2e10ba72"}; _ga_06ZNKL8C2E=GS1.1.1711745818.2.1.1711746308.15.0.0',
-        'Referer': 'https://terabox.app/',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-    }
-    my_session = aiohttp.ClientSession(headers=headers) 
-    return my_session
-
-async def fetch_download_link_async(url):
-    my_session = await create_session()
-    try:
-        async with my_session.get(url) as response:
-            response.raise_for_status()
-            response_data = await response.text()
-
-            js_token = await find_between(response_data, 'fn%28%22', '%22%29')
-            log_id = await find_between(response_data, 'dp-logid=', '&')
-
-            if not js_token or not log_id:
-                return None
-
-            request_url = str(response.url)
-            surl = request_url.split('surl=')[1]
-            params = {
-                'app_id': '250528',
-                'web': '1',
-                'channel': 'dubox',
-                'clienttype': '0',
-                'jsToken': js_token,
-                'dplogid': log_id,
-                'page': '1',
-                'num': '20',
-                'order': 'time',
-                'desc': '1',
-                'site_referer': request_url,
-                'shorturl': surl,
-                'root': '1'
-            }
-
-            async with my_session.get('https://www.terabox.app/share/list', params=params) as response2:
-                response_data2 = await response2.json()
-                if 'list' not in response_data2:
-                    return None
-                if response_data2['list'][0]['isdir'] == "1":
-                    params.update({
-                        'dir': response_data2['list'][0]['path'],
-                        'order': 'asc',
-                        'by': 'name',
-                        'dplogid': log_id
-                    })
-                    params.pop('desc')
-                    params.pop('root')
-                    async with my_session.get('https://www.terabox.app/share/list', params=params) as response3:
-                        response_data3 = await response3.json()
-                        if 'list' not in response_data3:
-                            return None
-                        return response_data3['list']
-                return response_data2['list']
-
-    except aiohttp.ClientResponseError as e:
-        print(f"Error fetching download link: {e}")
-        return None
-    finally:
-        await my_session.close()
-
-
-async def get_url(download_link):
-  try:
-    async with aiohttp.ClientSession() as session:
-        for url in download_urls:
-            full_url = url + download_link[download_link.index("/", 8):]
-            async with session.get(full_url) as response:
-                if response.status == 200:
-                    return full_url
-    return None
-  except Exception as e:
-    print(e)
-    return None
-     
-  
-async def get_direct_link(url):
-    try:
-        my_session = await create_session()
-        async with my_session.head(url) as response:
-            response.raise_for_status()
-            direct_link = response.headers.get('Location')
-            return direct_link
-    except Exception as e:
-        print(f"Error fetching direct link: {e}")
-        return None
-    finally:
-        await my_session.close()
-      
-
-  
-async def get_data(link_data):
-  try:
-    file_name = link_data["server_filename"]
-    file_size = await get_formatted_size_async(link_data["size"])
-    download_link = await get_direct_link(link_data["dlink"])
-    if not download_link:
-        download_link = await get_url(link_data["dlink"])
-        if not download_link:
-           url = random.choice(download_urls)
-           download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-    download_link = rapi.tinyurl.short(download_link)
-    thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, link_data["size"], download_link, thumb
-  except Exception as e:
-    print(e)
-    return None, None, None, None, None
-
 def extract_links(message):
     # fetch all links
     try:
@@ -331,6 +210,75 @@ async def shorten_url(long_url):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-      
+             
+async def get_data(url: str, cookie: str):
+    headersList = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9,hi;q=0.8",
+        "Connection": "keep-alive",
+        "Cookie": cookie,
+        "DNT": "1",
+        "Host": "www.terabox.app",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "sec-ch-ua": '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+    }
 
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headersList) as response:
+            response_url = str(response.url)
+            response_text = await response.text()
+
+    logid = await find_between(response_text, "dp-logid=", "&")
+    jsToken = await find_between(response_text, "fn%28%22", "%22%29")
+    bdstoken = await find_between(response_text, 'bdstoken":"', '"')
+    shorturl = await extract_surl_from_url(response_url)
+    if not shorturl:
+        return False
+
+    reqUrl = f"https://www.terabox.app/share/list?app_id=250528&web=1&channel=0&jsToken={jsToken}&dp-logid={logid}&page=1&num=20&by=name&order=asc&site_referer=&shorturl={shorturl}&root=1"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(reqUrl, headers=headersList) as response:
+            if response.status != 200:
+                return False
+            r_j = await response.json()
+
+    if r_j["errno"]:
+        return False
+    if "list" not in r_j or not r_j["list"]:
+        return False
+
+    async with aiohttp.ClientSession() as session:
+        async with session.head(r_j["list"][0]["dlink"], headers=headersList) as response:
+            direct_link = response.headers.get("location")
+    tiny = rapi.tinyurl.short(direct_link)
+    data = {
+        "file_name": r_j["list"][0]["server_filename"],
+        "link": r_j["list"][0]["dlink"],
+        "direct_link": direct_link,
+        "thumb": r_j["list"][0]["thumbs"]["url3"],
+        "size": await get_formatted_size_async(int(r_j["list"][0]["size"])),
+        "sizebytes": int(r_j["list"][0]["size"]),
+        "tinyurl": tiny, 
+    }
+    return data
+
+async def extract_surl_from_url(url: str):
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    surl = query_params.get("surl", [])
+
+    if surl:
+        return surl[0]
+    else:
+        return False
+      
       
