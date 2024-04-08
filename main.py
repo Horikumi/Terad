@@ -224,7 +224,7 @@ async def private_message_handler(client, message):
 
 
 async def terabox_func(client, message):       
-        url = extract_link(message.text)
+        url = await extract_link(message.text)
         if not url:
           return await message.reply_text("No Url Found")
         try:
@@ -311,9 +311,9 @@ async def terabox_func(client, message):
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")        
-        url = extract_link(message.text)
+        url = await extract_link(message.text)
         if not url:
-          return await message.reply_text("No Urls Found")
+          return await message.reply_text("No Url Found")
         try:
                 user_id = int(message.from_user.id)
                 if user_id in queue_url:
