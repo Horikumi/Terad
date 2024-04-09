@@ -25,6 +25,7 @@ file_collection = db.file
 usersdb = db.users
 urldb = db.urls
 tokendb = db.token
+rokendb = db.roken
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
@@ -67,6 +68,12 @@ START_TIME = time.time()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
+
+async def get_token():
+  chat_id = 12345
+  document = {"chat_id": chat_id}
+  hek = await tokendb.find_one(document)
+  return hek
 
 async def save_token(chat_id):
       if not await is_token(chat_id):
