@@ -91,7 +91,8 @@ async def is_token(chat_id):
         
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
-
+      token_cache.discard(chat_id)
+  
 async def remove_file(unique_id):
     await file_collection.delete_one({'unique_id': unique_id})
 
@@ -474,7 +475,6 @@ async def remove_tokens():
                 chat_id = document.get("chat_id")           
                 try:
                     await delete_token(chat_id)
-                    token_cache.discard(chat_id)
                     await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
