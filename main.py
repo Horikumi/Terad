@@ -75,8 +75,7 @@ async def get_token():
   chat_id = 12345
   document = {"chat_id": chat_id}
   hek = await rokendb.find_one(document)
-  if chat_id not in token_dict:
-      token_dict[chat_id] = hek['token']
+  token_dict[chat_id] = hek['token']
 
 async def save_token(chat_id):
     if not await is_token(chat_id):
@@ -474,6 +473,7 @@ async def remove_tokens():
                 chat_id = document.get("chat_id")           
                 try:
                     await delete_token(chat_id)
+                    token_cache.discard(chat_id)
                     await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
