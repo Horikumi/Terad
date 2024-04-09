@@ -243,7 +243,6 @@ async def queuedm_processor(client):
     await asyncio.sleep(3)
     while True:
         if queue_list:
-            while queue_list:
               message, urls = queue_list.pop(0)
               try:
                     await terabox_dm(client, message, urls)
