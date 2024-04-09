@@ -26,7 +26,7 @@ urldb = db.urls
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7121574962:AAEykm0e0I6q258JZHtLBc_6irb86_z1zNs"
+BOT_TOKEN = "7121574962:AAGFRbn-OYJLYkeRE7ZHtrp-rCZ_nk4YKxM"
 
 queue_url = {}
 queue_list = []
@@ -219,13 +219,12 @@ async def private_message_handler(client, message):
 
 
 async def teraboxdm_process(client, message):
-    valid_urls = []
     if not await is_join(message.from_user.id):
         return await message.reply_text("You need to join @CheemsBackup before using me")
-
     urls = extract_links(message.text)
     if not urls:
         return await message.reply_text("No URLs Found")
+    valid_urls = []
     for url in urls:
        if not await check_url_patterns_async(str(url)):
            await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
@@ -241,16 +240,17 @@ async def teraboxdm_process(client, message):
                 continue
           continue
        valid_urls.append(url)
-    queue_list.append((message, valid_urls))
-    queue_length = len(queue_list)
-    position_in_queue = queue_length - 1  # User's position in the queue (zero-indexed)
+    if valid_urls:
+       queue_list.append((message, valid_urls))
+       queue_length = len(queue_list)
+       position_in_queue = queue_length - 1  # User's position in the queue (zero-indexed)
 
-    reply_message = (
-        f"**Your Urls has been added to the Queue.**\n"
-        f"**Queue length:** {queue_length}\n"
-        f"**Your position in the queue**: {position_in_queue}"
-    )
-    await message.reply_text(reply_message)
+       reply_message = (
+          f"**Your Urls has been added to the Queue.**\n"
+          f"**Queue length:** {queue_length}\n"
+          f"**Your position in the queue**: {position_in_queue}"
+       )
+       await message.reply_text(reply_message)
 
 
 async def queuedm_processor(client):
