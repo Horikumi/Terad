@@ -363,7 +363,7 @@ async def handle_expired_token(message, token):
         "Token Timeout: 24 hours\n\n"
         "What is Token?\n\n"
         "This is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.\n\n"
-        "Watch Video Tutorial If you're facing any issues",
+        "Watch Video Tutorial If you're facing any issues.\n\n",
         "Apple users copy the token and paste it into browser.",
         reply_markup=keyboard
     )
