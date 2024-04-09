@@ -219,34 +219,48 @@ async def private_message_handler(client, message):
 
 
 async def teraboxdm_process(client, message):
+    valid_urls = []
     if not await is_join(message.from_user.id):
         return await message.reply_text("You need to join @CheemsBackup before using me")
 
     urls = extract_links(message.text)
     if not urls:
         return await message.reply_text("No URLs Found")
-
-    # Append message along with extracted URLs to the queue_list
-    queue_list.append((message, urls))
+    for url in urls:
+       if not await check_url_patterns_async(str(url)):
+           await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
+           continue
+       files = await get_file_ids(url)
+       if files:
+          for file, link in files:
+             try:
+                await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+             except FloodWait as e:
+                await asyncio.sleep(e.value)
+             except Exception as e:
+                continue
+          continue
+       valid_urls.append(url)
+    queue_list.append((message, valid_urls))
     queue_length = len(queue_list)
     position_in_queue = queue_length - 1  # User's position in the queue (zero-indexed)
 
     reply_message = (
-        f"Your process has been added to the global queue.\n"
-        f"Queue length: {queue_length}\n"
-        f"Your position in the queue: {position_in_queue}"
+        f"**Your Urls has been added to the Queue.**\n"
+        f"**Queue length:** {queue_length}\n"
+        f"**Your position in the queue**: {position_in_queue}"
     )
     await message.reply_text(reply_message)
 
 
 async def queuedm_processor(client):
     while True:
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
         if queue_list:
               message, urls = queue_list.pop(0)
               try:
                     await terabox_dm(client, message, urls)
-                    await asyncio.sleep(1)  # Optional delay between processing URLs
+           #         await asyncio.sleep(1)  # Optional delay between processing URLs
               except Exception as e:
                 print(e)
 
@@ -255,20 +269,7 @@ async def queuedm_processor(client):
 
 async def terabox_dm(client, message, urls):        
         try:
-            for url in urls:
-                if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue                              
-                files = await get_file_ids(url)
-                if files:
-                  for file, link in files:
-                    try:
-                       await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                    except FloodWait as e:
-                      await asyncio.sleep(e.value)
-                    except Exception as e:
-                       continue
-                  continue                
+            for url in urls:                                                           
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
