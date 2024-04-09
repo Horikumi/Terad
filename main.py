@@ -76,18 +76,19 @@ async def get_token():
   return hek['token']
 
 async def save_token(chat_id):
-      if not await is_token(chat_id):
-        	timer_after = datetime.now() + timedelta(minutes=1440)
-        	document = {"chat_id": chat_id, "timer_after": timer_after}
-    	    await tokendb.insert_one(document)
+    if not await is_token(chat_id):
+        timer_after = datetime.now() + timedelta(minutes=1440)
+        document = {"chat_id": chat_id, "timer_after": timer_after}
+        await tokendb.insert_one(document)
 
-async def is_token(chat_id):    	   	
-    	document = {"chat_id": chat_id}
-    	hek = await tokendb.find_one(document)
-      if hek:
+async def is_token(chat_id):
+    document = {"chat_id": chat_id}
+    hek = await tokendb.find_one(document)
+    if hek:
         return True
-      else:
+    else:
         return False
+
         
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
