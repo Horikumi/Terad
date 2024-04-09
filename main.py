@@ -89,7 +89,6 @@ async def is_token(chat_id):
       else:
         return False
         
-
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
 
@@ -462,8 +461,26 @@ async def terabox_dm(client, message):
                 del queue_url[user_id]
 
 
+async def remove_tokens():
+        while True:
+          try:
+            await asyncio.sleep(60)
+            current_time = datetime.now()
+            filter_query = {"timer_after": {"$lt": current_time}}
+            deleted_documents = await tokendb.find(filter_query).to_list(None)
+            for document in deleted_documents:
+                chat_id = document.get("chat_id")           
+                try:
+                    await delete_token(chat_id)           
+                except Exception as e:
+                    print(e)
+          except Exception as e:
+            print(f"Error in delete_videos loop: {e}")
+
+
 async def init():
     await app.start()
+    asyncio.create_task(remove_tokens())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
