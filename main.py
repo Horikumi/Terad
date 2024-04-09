@@ -29,6 +29,7 @@ API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
 BOT_TOKEN = "7121574962:AAEykm0e0I6q258JZHtLBc_6irb86_z1zNs"
 
 queue_url = {}
+queue_list = []
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -204,15 +205,6 @@ async def broadcast_func(_, message: Message):
         pass
 
 
-@app.on_message(filters.chat(-1001935231841) & (filters.text | filters.caption))
-async def message_handler(client, message):
-  text = message.text or message.caption
-  if "tera" in text or "box" in text:
-       asyncio.create_task(terabox_func(client, message))
-  else:
-    return await message.reply_text("Send Only Terabox Urls", quote=True)
-
-
 def box_fil(_, __, message):
     if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
         text = message.text or message.caption
@@ -225,123 +217,43 @@ async def private_message_handler(client, message):
         asyncio.create_task(teraboxdm_process(client, message))
 
 
-async def terabox_func(client, message):
-        urls = extract_links(message.text)
-        if not urls:
-          return await message.reply_text("No Urls Found")
-        try:
-            for url in urls:
-                if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue
-                try:
-                    await app.send_message(message.from_user.id, ".")
-                except:
-                    button = InlineKeyboardButton("Click Here", url="https://t.me/teradlrobot?start=True")
-                    keyboard = InlineKeyboardMarkup([[button]])
-                    return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)                
-                files = await get_file_ids(url)
-                if files:
-                  for file, link in files:
-                    try:
-                       await app.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
-                    except FloodWait as e:
-                       await asyncio.sleep(e.value)
-                    except Exception as e:
-                       continue
-                  continue
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        return await message.reply_text("This Url is Already In Process Wait")
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
-                except Exception as e:
-                   print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
-                      try:                         
-                         if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
-                             ril = await client.send_video(message.from_user.id, dlink, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`")
-                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                             direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                             await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
-                             await store_file(unique_id, file_id)
-                             await store_url(url, file_id, unique_id, direct_url)
-                         else:
-                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                              await nil.edit_text("Completed")
-                      except FloodWait as e:
-                         await asyncio.sleep(e.value)
-                      except Exception as e:
-                         print(e)
-                         try:
-                               vid_path = await loop.run_in_executor(None, download_file, dlink, name)
-                               thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                               dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
-                               ril = await client.send_video(message.from_user.id, vid_path, has_spoiler=True, thumb=thumb_path, caption=f"**Title**: `{name}`\n**Size**: `{size}`", duration=int(dur))
-                               file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                               unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                               
-                               direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                               await nil.edit_text(f"Completed\n\n**File Direct Link:** [Link]({direct_url})", disable_web_page_preview=True)
-                               await store_file(unique_id, file_id)
-                               await store_url(url, file_id, unique_id, direct_url)                       
-                         except FloodWait as e:
-                              await asyncio.sleep(e.value)
-                         except Exception as e:
-                           print(e)                          
-                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                           await nil.edit_text("Completed")
-                         finally:
-                                if vid_path and os.path.exists(vid_path):
-                                   os.remove(vid_path)
-                                if thumb_path and os.path.exists(thumb_path):
-                                     os.remove(thumb_path)
-        except FloodWait as e:
-          await asyncio.sleep(e.value)
-        except Exception as e:
-            print(e)
-            await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                 del queue_url[user_id]
-
 
 async def teraboxdm_process(client, message):
-    queue_list.append(message)
-    return await message.reply_text(f"Your Process has been added to the global queue.\n\nQueue length: {len(queue_list)}")
-  
+    if not await is_join(message.from_user.id):
+        return await message.reply_text("You need to join @CheemsBackup before using me")
+
+    urls = extract_links(message.text)
+    if not urls:
+        return await message.reply_text("No URLs Found")
+
+    # Append message along with extracted URLs to the queue_list
+    queue_list.append((message, urls))
+    queue_length = len(queue_list)
+    position_in_queue = queue_length - 1  # User's position in the queue (zero-indexed)
+
+    reply_message = (
+        f"Your process has been added to the global queue.\n"
+        f"Queue length: {queue_length}\n"
+        f"Your position in the queue: {position_in_queue}"
+    )
+    await message.reply_text(reply_message)
+
 
 async def queuedm_processor(client):
     while True:
         if queue_list:
             while queue_list:
-                message = queue_list.pop(0)
-                try:
-                   await terabox_dm(client, message)
-                   await asyncio.sleep(1)
-                except Exception as e:
-                   print(e)
-                
-              
-     
-async def terabox_dm(client, message):
-        if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup before using me")
-        urls = extract_links(message.text)
-        if not urls:
-          return await message.reply_text("No Urls Found")
+              message, urls = queue_list.pop(0)
+              try:
+                    await terabox_dm(client, message, urls)
+                    await asyncio.sleep(1)  # Optional delay between processing URLs
+              except Exception as e:
+                print(e)
+
+
+
+
+async def terabox_dm(client, message, urls):        
         try:
             for url in urls:
                 if not await check_url_patterns_async(str(url)):
