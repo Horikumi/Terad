@@ -349,32 +349,17 @@ async def terabox_func(client, message):
                  del queue_url[user_id]
 
 
-async def handle_expired_token(message, token):
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("Click Here to Refresh Token", url=token)
-        ],
-        [
-            InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")
-        ]
-    ])
-    await message.reply_text(
-        "Your Ads Token is expired, refresh your token and try again.\n\n"
-        "Token Timeout: 24 hours\n\n"
-        "What is Token?\n\n"
-        "This is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.\n\n"
-        "Watch Video Tutorial If you're facing any issues.\n\n"
-        "Apple users copy the token and paste it into browser.",
-        reply_markup=keyboard
-    )
-  
 
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await is_token(message.from_user.id):
             token = token_dict.get(12345)
-            return await handle_expired_token(message, token)
+            keyboard = InlineKeyboardMarkup([
+                 [InlineKeyboardButton("Refresh Token", url=token)],
+                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
+            ])
+            return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 24 hours\nToken Usage: Pass 1 ad to use the bot for the next 24 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
