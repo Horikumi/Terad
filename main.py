@@ -76,6 +76,7 @@ async def get_token():
   document = {"chat_id": chat_id}
   hek = await rokendb.find_one(document)
   token_dict[chat_id] = hek['token']
+  return hek['token']
 
 async def save_token(chat_id):
     if not await is_token(chat_id):
@@ -465,7 +466,7 @@ async def remove_tokens():
         while True:
           try:
             await asyncio.sleep(60)
-            await get_token()
+            tok = await get_token()
             current_time = datetime.now()
             filter_query = {"timer_after": {"$lt": current_time}}
             deleted_documents = await tokendb.find(filter_query).to_list(None)
