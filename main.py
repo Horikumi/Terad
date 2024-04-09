@@ -473,7 +473,10 @@ async def remove_tokens():
             for document in deleted_documents:
                 chat_id = document.get("chat_id")           
                 try:
-                    await delete_token(chat_id)           
+                    await delete_token(chat_id)
+                    await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
                 except Exception as e:
                     print(e)
           except Exception as e:
