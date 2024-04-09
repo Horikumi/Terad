@@ -26,7 +26,7 @@ urldb = db.urls
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7121574962:AAEykm0e0I6q258JZHtLBc_6irb86_z1zNs"
+BOT_TOKEN = "7121574962:AAGFRbn-OYJLYkeRE7ZHtrp-rCZ_nk4YKxM"
 
 queue_url = {}
 
