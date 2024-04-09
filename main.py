@@ -6,6 +6,7 @@ from pyrogram import __version__ as pyrover
 from pyrogram import filters, idle
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
+from datetime import datetime, timedelta
 import pyrogram, asyncio, os, uvloop, time
 from pyrogram import Client, filters, idle, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -23,6 +24,7 @@ db = client.rest  # Replace "your_database" with the name of your MongoDB databa
 file_collection = db.file
 usersdb = db.users
 urldb = db.urls
+tokendb = db.token
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
@@ -65,6 +67,20 @@ START_TIME = time.time()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
+
+async def save_token(chat_id):
+      if not await is_token(chat_id):
+        	timer_after = datetime.now() + timedelta(minutes=1440)
+        	document = {"chat_id": chat_id, "timer_after": timer_after}
+    	    await tokendb.insert_one(document)
+
+async def is_token(chat_id):    	   	
+    	document = {"chat_id": chat_id}
+    	hek = await tokendb.find_one(document)
+      return bool(hek)
+
+async def delete_token(chat_id):
+      await tokendb.delete_one({"chat_id": chat_id})         
 
 async def remove_file(unique_id):
     await file_collection.delete_one({'unique_id': unique_id})
@@ -318,10 +334,31 @@ async def terabox_func(client, message):
                  del queue_url[user_id]
 
 
+async def handle_expired_token(message, token):
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Click here to refresh token", url=token)
+        ],
+        [
+            InlineKeyboardButton("Video tutorial", url="https://example.com/tutorial")
+        ]
+    ])
+    await message.reply_text(
+        "Your Ads Token is expired, refresh your token and try again.\n\n"
+        "Token Timeout: 24 hours\n\n"
+        "What is Token?\n\n"
+        "This is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.\n\n"
+        "Watch Video Tutorial If you're facing any issues.",
+        reply_markup=keyboard
+    )
+  
 
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
+        if not await is_token(message.from_user.id):
+            token= await shorten_url_async(f"https://t.me/teradlrobot?start=token{message.from_user.id}")
+            return await handle_expired_token(message, token)
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
