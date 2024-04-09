@@ -72,8 +72,8 @@ save = {}
 async def get_token():
   chat_id = 12345
   document = {"chat_id": chat_id}
-  hek = await tokendb.find_one(document)
-  return hek
+  hek = await rokendb.find_one(document)
+  return hek['token']
 
 async def save_token(chat_id):
       if not await is_token(chat_id):
@@ -169,6 +169,10 @@ async def start_fun(client, message: Message):
              if file_id:
                  hel = await app.send_cached_media(message.chat.id, file_id)
                  return await add_served_user(message.chat.id)
+    elif len(message.command) > 1 and "token" in message.command[1]:
+            # token = message.command[1].replace("token", "")
+             await save_token(message.from_user.id)
+             return await message.reply_text("🎉 Token Activated 🎉")
     await message.reply_text("Send Only Terabox urls")
     return await add_served_user(message.chat.id)
 
@@ -344,7 +348,7 @@ async def terabox_func(client, message):
 async def handle_expired_token(message, token):
     keyboard = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("Click here to refresh token", url=token)
+            InlineKeyboardButton("Click Here to Refresh Token", url=token)
         ],
         [
             InlineKeyboardButton("Video tutorial", url="https://t.me/AdrinoTutorial/2")
