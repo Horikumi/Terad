@@ -474,9 +474,9 @@ async def extract_tokens():
         token_cache.add(chat_id)
       
 async def init():
-    await app.start()
     await get_token()
     await extract_tokens()
+    await app.start()
     asyncio.create_task(remove_tokens())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
