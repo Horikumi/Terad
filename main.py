@@ -357,7 +357,7 @@ async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await is_token(message.from_user.id):
-            token= await shorten_url_async(f"https://t.me/teradlrobot?start=token{message.from_user.id}")
+            token = await shorten_url_async(f"https://t.me/teradlrobot?start=token{message.from_user.id}")
             return await handle_expired_token(message, token)
         urls = extract_links(message.text)
         if not urls:
