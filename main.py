@@ -240,8 +240,8 @@ async def teraboxdm_process(client, message):
 
 
 async def queuedm_processor(client):
-    await asyncio.sleep(3)
     while True:
+        await asyncio.sleep(3)
         if queue_list:
               message, urls = queue_list.pop(0)
               try:
