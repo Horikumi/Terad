@@ -84,7 +84,11 @@ async def save_token(chat_id):
 async def is_token(chat_id):    	   	
     	document = {"chat_id": chat_id}
     	hek = await tokendb.find_one(document)
-      return bool(hek)
+      if hek:
+        return True
+      else:
+        return False
+        
 
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
