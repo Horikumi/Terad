@@ -173,6 +173,15 @@ async def start_fun(client, message: Message):
     await message.reply_text("Send Only Terabox urls")
     return await add_served_user(message.chat.id)
 
+@app.on_message(filters.command("token") & filters.private)
+async def token_fun(client, message: Message):
+        token = await get_token()
+        keyboard = InlineKeyboardMarkup([
+                 [InlineKeyboardButton("Refresh Token", url=token)],
+                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
+        ])
+        return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 24 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 24 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
+
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
 async def stats_func(_, message: Message):
@@ -244,12 +253,7 @@ async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
-            token = await get_token()
-            keyboard = InlineKeyboardMarkup([
-                 [InlineKeyboardButton("Refresh Token", url=token)],
-                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
-            ])
-            return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 24 hours\nToken Usage: Pass 1 ad to use the bot for the next 24 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
+            return await message.reply_text("Your account is deactivated. send /token to get activate it again.")            
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
