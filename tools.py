@@ -247,12 +247,12 @@ async def get_data(link_data):
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-    download_link = rapi.tinyurl.short(download_link)
+    short_link = rapi.tinyurl.short(download_link)
     thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, link_data["size"], download_link, thumb
+    return file_name, file_size, link_data["size"], short_link, thumb, download_link
   except Exception as e:
     print(e)
-    return None, None, None, None, None
+    return None, None, None, None, None, None
 
 def extract_links(message):
     # fetch all links
