@@ -166,7 +166,6 @@ async def is_join(user_id):
         return False  
     except FloodWait as e:
         await asyncio.sleep(e.value)
-        
 
 
 
@@ -239,7 +238,7 @@ async def broadcast_func(_, message: Message):
     except:
         pass
 
-
+"""
 @app.on_message(filters.chat(-1001935231841) & (filters.text | filters.caption))
 async def message_handler(client, message):
   text = message.text or message.caption
@@ -247,7 +246,7 @@ async def message_handler(client, message):
        asyncio.create_task(terabox_func(client, message))
   else:
     return await message.reply_text("Send Only Terabox Urls", quote=True)
-
+"""
 
 def box_fil(_, __, message):
     if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
@@ -303,7 +302,7 @@ async def terabox_func(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, size_bytes, shortlink, thumb, dlink = await get_data(link)
+                    name, size, size_bytes, dlink, thumb  = await get_data(link)
                     if dlink:
                       try:                         
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
@@ -315,7 +314,7 @@ async def terabox_func(client, message):
                              await store_file(unique_id, file_id)
                              await store_url(url, file_id, unique_id, direct_url)
                          else:
-                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {shortlink}")
+                              await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                               await nil.edit_text("Completed")
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -336,7 +335,7 @@ async def terabox_func(client, message):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                          
-                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {shortlink}")
+                           await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
@@ -400,7 +399,7 @@ async def terabox_dm(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, size_bytes, thumb, dlink = await get_data(link)
+                    name, size, size_bytes, dlink, thumb  = await get_data(link)
                     if dlink:
                       try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
@@ -413,7 +412,7 @@ async def terabox_dm(client, message):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")
+                             await client.send_message(message.chat.id, text=f"**Failed To Download Media Try Downloading using Direct Link**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                              await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -435,7 +434,7 @@ async def terabox_dm(client, message):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                     
-                           await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")
+                           await client.send_message(message.chat.id, text=f"**Failed To Download Media Try Downloading using Direct Link**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
