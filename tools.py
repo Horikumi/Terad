@@ -239,32 +239,33 @@ async def get_direct_link(url):
   
 async def get_data(link_data):
   try:
-    file_name = link_data["server_filename"]
-    file_size = await get_formatted_size_async(link_data["size"])
-    download_link = await get_direct_link(link_data["dlink"])
+    file_name = link_data[0]["server_filename"]
+    file_size = await get_formatted_size_async(link_data[0]["size"])
+    download_link = await get_direct_link(link_data[0]["dlink"])
     if not download_link:
-        download_link = await get_url(link_data["dlink"])
+        download_link = await get_url(link_data[0]["dlink"])
         if not download_link:
            url = random.choice(download_urls)
-           download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
+           download_link = url + link_data[0]["dlink"][link_data[0]["dlink"].index("/", 8):]
     download_link = rapi.tinyurl.short(download_link)
-    thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, link_data["size"], download_link, thumb
+    thumb = link_data[0]["thumbs"]["url3"]
+    return file_name, file_size, link_data[0]["size"], download_link, thumb
   except Exception as e:
     print(e)
     return None, None, None, None, None
 
-def extract_links(message):
-    # fetch all links
+async def extract_link(message):
     try:
-        url_pattern = r'https?://\S+'        
-        matches = re.findall(url_pattern, message)
-
-        return matches[:1]
+        url_pattern = r'https?://\S+'
+        match = re.search(url_pattern, message)        
+        if match:
+            return match.group(0)
+        else:
+            return None  # Return None if no match found       
     except Exception as e:
-        print(f"Error extracting links: {e}")
-        return []
-        
+        print(f"Error extracting link: {e}")
+        return None  # Return None on any exception
+
 
 async def get_formatted_size_async(size_bytes):
     try:
