@@ -275,7 +275,7 @@ async def terabox_dm(client, message):
              queue_url[user_id] = {}
        queue_url[user_id][url] = True
        nil = await message.reply_text("🔎 Processing URL...", quote=True)
-       await terabox_func(client, message, nil, url)
+       asyncio.create_task(terabox_func(client, message, nil, url))
     except FloodWait as e:
           await asyncio.sleep(e.value)
     except Exception as e:
