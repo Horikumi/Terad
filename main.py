@@ -248,36 +248,47 @@ box_filter = filters.create(box_fil)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
   
-
 async def terabox_dm(client, message):
-        if not await is_join(message.from_user.id):
+    try:
+       if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
-        if not await tokendb.find_one({"chat_id": message.from_user.id}):
+       if not await tokendb.find_one({"chat_id": message.from_user.id}):
             return await message.reply_text("Your account is deactivated. send /token to get activate it again.")            
-        url = await extract_link(message.text)
-        if not url:
+       url = await extract_link(message.text)
+       if not url:
           return await message.reply_text("No Url Found")
-        try:
-          
-                if not await check_url_patterns_async(str(url)):
+       if not await check_url_patterns_async(str(url)):
                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                              
-                files = await get_file_ids(url)
-                if files:
-                  for file, link in files:
-                    try:
-                       await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                    except FloodWait as e:
-                       await asyncio.sleep(e.value)
-                    except Exception as e:
-                       continue
-                  return  
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                     return await message.reply_text("This Url is Already In Process Wait")
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
+       files = await get_file_ids(url)
+       if files:
+           for file, link in files:
+              try:
+                  await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+              except FloodWait as e:
+                  await asyncio.sleep(e.value)
+              except Exception as e:
+                  continue
+            return
+       user_id = int(message.from_user.id)
+       if user_id in queue_url and str(url) in queue_url[user_id]:
+             return await message.reply_text("This Url is Already In Process Wait")
+       if user_id not in queue_url:
+             queue_url[user_id] = {}
+       queue_url[user_id][url] = True
+       nil = await message.reply_text("🔎 Processing URL...", quote=True)
+       await terabox_func(client, message, nil, url)
+    except FloodWait as e:
+          await asyncio.sleep(e.value)
+    except Exception as e:
+            print(e)
+            await message.reply_text("Some Error Occurred", quote=True)
+    finally:
+            if user_id in queue_url and str(url) in queue_url[user_id]:
+                del queue_url[user_id][url]
+                
+
+    
+async def terabox_func(client, message, nil, url):                              
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
@@ -327,14 +338,7 @@ async def terabox_dm(client, message):
                                    os.remove(vid_path)
                                 if thumb_path and os.path.exists(thumb_path):
                                      os.remove(thumb_path)
-        except FloodWait as e:
-          await asyncio.sleep(e.value)
-        except Exception as e:
-            print(e)
-            await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url and str(url) in queue_url[user_id]:
-                del queue_url[user_id][url]
+
 
 
 
