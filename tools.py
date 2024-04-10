@@ -7,7 +7,7 @@ import re, json, aiohttp, random
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
-#rapi = pyshorteners.Shortener()
+rapi = pyshorteners.Shortener()
 
 download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
 
