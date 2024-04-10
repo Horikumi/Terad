@@ -254,37 +254,34 @@ async def terabox_dm(client, message):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
             return await message.reply_text("Your account is deactivated. send /token to get activate it again.")            
-        url = extract_link(message.text)
+        url = await extract_link(message.text)
         if not url:
-          return await message.reply_text("No Urls Found")
+          return await message.reply_text("No Url Found")
         try:
             #    user_id = int(message.from_user.id)
               #  if user_id in queue_url:
             #          return await message.reply_text("One Url At a Time")                
              #   queue_url[user_id] = True
                 if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue                              
+                   return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                              
                 files = await get_file_ids(url)
                 if files:
                   for file, link in files:
                     try:
                        await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
                     except FloodWait as e:
-                      await asyncio.sleep(e.value)
+                       await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
-                  continue                               
+                  return                              
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
+                       return await message.reply_text("No download link available for this URL", quote=True)                      
                 except Exception as e:
                    print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue       
+                   return await message.reply_text("Some Error Occurred", quote=True)       
                 name, size, size_bytes, dlink, thumb  = await get_data(link_data)
                 if dlink:
                       try:                        
@@ -298,8 +295,8 @@ async def terabox_dm(client, message):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                 else:
-                             await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
-                             await nil.edit_text("Completed")                     
+                            await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+                            await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
