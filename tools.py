@@ -247,7 +247,7 @@ async def get_data(link_data):
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data[0]["dlink"][link_data[0]["dlink"].index("/", 8):]
-    download_link = rapi.tinyurl.short(download_link)
+  #  download_link = rapi.tinyurl.short(download_link)
     thumb = link_data[0]["thumbs"]["url3"]
     return file_name, file_size, link_data[0]["size"], download_link, thumb
   except Exception as e:
