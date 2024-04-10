@@ -173,8 +173,8 @@ async def start_fun(client, message: Message):
     await message.reply_text("Send Only Terabox urls")
     return await add_served_user(message.chat.id)
 
-@app.on_message(filters.command("token") & filters.private)
-async def token_fun(client, message: Message):
+
+async def token_fun(client, message):
         token = await get_token()
         keyboard = InlineKeyboardMarkup([
                  [InlineKeyboardButton("Refresh Token", url=token)],
@@ -253,7 +253,7 @@ async def terabox_dm(client, message):
        if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
        if not await tokendb.find_one({"chat_id": message.from_user.id}):
-            return await message.reply_text("Your account is deactivated. send /token to get activate it again.")            
+            return await token_fun(client, message)            
        url = await extract_link(message.text)
        if not url:
           return await message.reply_text("No Url Found")
