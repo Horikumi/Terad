@@ -249,6 +249,7 @@ async def private_message_handler(client, message):
   
 async def terabox_dm(client, message):
     try:
+       user_id = int(message.from_user.id) 
        if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
        if not await tokendb.find_one({"chat_id": message.from_user.id}):
@@ -268,7 +269,6 @@ async def terabox_dm(client, message):
               except Exception as e:
                   continue
            return
-       user_id = int(message.from_user.id)
        if user_id in queue_url and str(url) in queue_url[user_id]:
              return await message.reply_text("This Url is Already In Process Wait")
        if user_id not in queue_url:
