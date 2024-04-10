@@ -258,10 +258,7 @@ async def terabox_dm(client, message):
         if not url:
           return await message.reply_text("No Url Found")
         try:
-            #    user_id = int(message.from_user.id)
-              #  if user_id in queue_url:
-            #          return await message.reply_text("One Url At a Time")                
-             #   queue_url[user_id] = True
+          
                 if not await check_url_patterns_async(str(url)):
                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                              
                 files = await get_file_ids(url)
@@ -273,7 +270,13 @@ async def terabox_dm(client, message):
                        await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
-                  return                              
+                  return  
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                     return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -329,9 +332,9 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-       # finally:
-          #  if user_id in queue_url:
-              #  del queue_url[user_id]
+        finally:
+            if user_id in queue_url and str(url) in queue_url[user_id]:
+                del queue_url[user_id][url]
 
 
 async def remove_tokens():
