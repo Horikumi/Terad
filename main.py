@@ -321,7 +321,7 @@ async def terabox_func(client, message, nil, url):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                            await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+                            await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                             await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -343,7 +343,7 @@ async def terabox_func(client, message, nil, url):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                     
-                           await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+                           await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
