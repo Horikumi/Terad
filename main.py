@@ -77,7 +77,7 @@ async def get_token():
 
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
-        timer_after = datetime.now() + timedelta(minutes=1440)
+        timer_after = datetime.now() + timedelta(minutes=720)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
         
@@ -180,7 +180,7 @@ async def token_fun(client, message):
                  [InlineKeyboardButton("Refresh Token", url=token)],
                  [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
         ])
-        return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 24 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 24 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
+        return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 12 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 12 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
 
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
