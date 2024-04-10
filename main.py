@@ -248,7 +248,7 @@ box_filter = filters.create(box_fil)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
   
-
+"""
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
@@ -335,6 +335,124 @@ async def terabox_dm(client, message):
         finally:
             if user_id in queue_url and str(url) in queue_url[user_id]:
                 del queue_url[user_id][url]
+
+"""
+
+async def terabox_dm(client, message):
+    user_id = message.from_user.id
+    
+    # Check if the user is joined and has an active token
+    if not await is_join(user_id):
+        return await message.reply_text("You need to join @CheemsBackup before using me")
+    
+    if not await tokendb.find_one({"chat_id": user_id}):
+        return await message.reply_text("Your account is deactivated. Send /token to activate it again.")
+
+    # Extract URL from the message
+    url = await extract_link(message.text)
+    if not url:
+        return await message.reply_text("No URL Found")
+
+    try:
+        # Check if the URL is a valid Terabox URL
+        if not await check_url_patterns_async(str(url)):
+            return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
+
+        # Get file IDs and links associated with the URL
+        files = await get_file_ids(url)
+        if files:
+            for file_id, link in files:
+                try:
+                    await app.send_cached_media(message.chat.id, file_id, caption=f"**Direct File Link**: {link}")
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
+                except Exception as e:
+                    continue
+            return
+        user_id = int(message.from_user.id)
+        if user_id in queue_url and str(url) in queue_url[user_id]:
+              return await message.reply_text("This Url is Already In Process Wait")
+        if user_id not in queue_url:
+              queue_url[user_id] = {}
+        queue_url[user_id][url] = True
+        # Process the URL to fetch download link and metadata
+        nil = await message.reply_text("🔎 Processing URL...", quote=True)
+        try:
+            link_data = await fetch_download_link_async(url)
+            if link_data is None:
+                return await message.reply_text("No download link available for this URL", quote=True)
+
+            name, size, size_bytes, dlink, thumb = await get_data(link_data)
+            if dlink:
+                if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                    # Download and send the video
+                    await send_video_or_download(client, message, dlink, name, size, thumb)
+                else:
+                    await message.reply_text(f"**Failed to download media.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+            else:
+                await message.reply_text(f"Failed to retrieve download link for the URL.", quote=True)
+
+            await nil.edit_text("Completed")
+        
+        except Exception as e:
+            print(f"Error processing URL: {e}")
+            await message.reply_text("Some Error Occurred", quote=True)
+
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+    except Exception as e:
+        print(f"Error in terabox_dm: {e}")
+        await message.reply_text("Some Error Occurred", quote=True)
+    finally:
+            if user_id in queue_url and str(url) in queue_url[user_id]:
+                del queue_url[user_id][url]
+
+
+
+async def send_video_or_download(client, message, dlink, name, size, thumb):
+    try:
+        # Attempt to send the video directly
+        ril = await client.send_video(-1002069870125, dlink, caption="Indian")
+        file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+        unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))       
+        direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+        await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+        await store_file(unique_id, file_id)
+        await store_url(url, file_id, unique_id, direct_url)
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+    except Exception as e:
+        print(f"Error sending video: {e}")
+        # If direct send fails, download and send
+        await download_and_send_video(client, message, dlink, name, size, thumb)
+
+
+async def download_and_send_video(client, message, dlink, name, size, thumb):
+    try:
+        # Download the video and send
+        vid_path = await loop.run_in_executor(None, download_file, dlink, name)
+        thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
+        dur = await loop.run_in_executor(None, get_duration, vid_path)
+        
+        ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
+        file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+        unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))        
+        direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+        await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+        await store_file(unique_id, file_id)
+        await store_url(url, file_id, unique_id, direct_url)
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+    except Exception as e:
+        print(f"Error downloading and sending video: {e}")
+        await message.reply_text(f"**Failed to download media.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+    finally:
+        # Clean up downloaded files
+        if vid_path and os.path.exists(vid_path):
+            os.remove(vid_path)
+        if thumb_path and os.path.exists(thumb_path):
+            os.remove(thumb_path)
+
 
 
 async def remove_tokens():
