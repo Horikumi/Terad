@@ -348,8 +348,8 @@ async def terabox_func(client, message):
 
 
 async def terabox_dm(client, message):
-    #    if not await is_join(message.from_user.id):
-   #         return await message.reply_text("you need to join @CheemsBackup before using me")
+        if not await is_join(message.from_user.id):
+            return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
             token = await get_token()
             keyboard = InlineKeyboardMarkup([
@@ -444,7 +444,7 @@ async def terabox_dm(client, message):
             if user_id in queue_url:
                 del queue_url[user_id]
 
-
+"""
 async def remove_tokens():
         while True:
           try:
@@ -461,11 +461,11 @@ async def remove_tokens():
           except Exception as e:
             print(f"Error in delete_videos loop: {e}")
 
-
+"""
 
 async def init():
     await app.start()
-    asyncio.create_task(remove_tokens())
+  #  asyncio.create_task(remove_tokens())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
