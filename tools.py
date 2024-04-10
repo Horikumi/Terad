@@ -7,7 +7,7 @@ import re, json, aiohttp, random
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
-rapi = pyshorteners.Shortener()
+#rapi = pyshorteners.Shortener()
 
 download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
 
@@ -247,9 +247,9 @@ async def get_data(link_data):
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-    short_link = rapi.tinyurl.short(download_link)
+ #   short_link = rapi.tinyurl.short(download_link)
     thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, link_data["size"], short_link, thumb, download_link
+    return file_name, file_size, link_data["size"], thumb, download_link
   except Exception as e:
     print(e)
     return None, None, None, None, None
