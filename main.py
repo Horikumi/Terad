@@ -254,15 +254,14 @@ async def terabox_dm(client, message):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
             return await message.reply_text("Your account is deactivated. send /token to get activate it again.")            
-        urls = extract_links(message.text)
-        if not urls:
+        url = extract_link(message.text)
+        if not url:
           return await message.reply_text("No Urls Found")
         try:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                return await message.reply_text("One Url At a Time")                
-            queue_url[user_id] = True
-            for url in urls:
+            #    user_id = int(message.from_user.id)
+              #  if user_id in queue_url:
+            #          return await message.reply_text("One Url At a Time")                
+             #   queue_url[user_id] = True
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue                              
@@ -285,10 +284,9 @@ async def terabox_dm(client, message):
                 except Exception as e:
                    print(e)
                    await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
+                   continue       
+                name, size, size_bytes, dlink, thumb  = await get_data(link_data)
+                if dlink:
                       try:                        
                          if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                             ril = await client.send_video(-1002069870125, dlink, caption="Indian")
@@ -299,7 +297,7 @@ async def terabox_dm(client, message):
                             await nil.edit_text("Completed")
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
-                         else:
+                else:
                              await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
                              await nil.edit_text("Completed")                     
                       except FloodWait as e:
@@ -334,9 +332,9 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                del queue_url[user_id]
+       # finally:
+          #  if user_id in queue_url:
+              #  del queue_url[user_id]
 
 
 async def remove_tokens():
