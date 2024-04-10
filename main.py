@@ -77,20 +77,12 @@ async def get_token():
   return hek['token']
 
 async def save_token(chat_id):
-    if not await is_token(chat_id):
+    if not await tokendb.find_one({"chat_id": chat_id}):
         timer_after = datetime.now() + timedelta(minutes=1440)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
         
 
-async def is_token(chat_id):
-    document = {"chat_id": chat_id}
-    hek = await tokendb.find_one(document)
-    if hek:
-      return True
-    else:
-      return False
-        
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
 
@@ -356,9 +348,9 @@ async def terabox_func(client, message):
 
 
 async def terabox_dm(client, message):
-        if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup before using me")
-        if not await is_token(message.from_user.id):
+    #    if not await is_join(message.from_user.id):
+   #         return await message.reply_text("you need to join @CheemsBackup before using me")
+        if not await tokendb.find_one({"chat_id": message.from_user.id}):
             token = await get_token()
             keyboard = InlineKeyboardMarkup([
                  [InlineKeyboardButton("Refresh Token", url=token)],
