@@ -269,9 +269,11 @@ async def terabox_dm(client, message):
               except Exception as e:
                   continue
            return
-       if user_id in queue_url:
+       if user_id in queue_url and str(url) in queue_url[user_id]:
              return await message.reply_text("Only One Url at a Time")
-       queue_url[user_id] = True
+       if user_id not in queue_url:
+           queue_url[user_id] = {}
+       queue_url[user_id][url] = True
        nil = await message.reply_text("🔎 Processing URL...", quote=True)
        await terabox_func(client, message, nil, url)
     except FloodWait as e:
@@ -280,8 +282,8 @@ async def terabox_dm(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
     finally:
-            if user_id in queue_url:
-                del queue_url[user_id]
+            if user_id in queue_url and str(url) in queue_url[user_id]:
+                del queue_url[user_id][url]
                 
 
     
