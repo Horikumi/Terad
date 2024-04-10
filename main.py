@@ -129,6 +129,15 @@ async def store_url(url, file_id, unique_id, direct_link):
     except Exception as e:
         print(f"Error storing URL, file ID, unique ID, and direct link: {e}")
 
+async def is_file_ids(url):
+    url = await extract_code(url)
+    document = await urldb.find_one({"url": url})
+    if document:
+         return True
+    else:
+         return False
+    
+
 
 async def get_file_ids(url):
     try:
@@ -246,6 +255,19 @@ box_filter = filters.create(box_fil)
 @app.on_message(box_filter)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
+
+
+async def handle_files(client, message, url):
+    files = await get_file_ids(url)
+    for file, link in files:
+         try:
+             await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+         except FloodWait as e:
+              await asyncio.sleep(e.value)
+         except Exception as e:
+              continue
+  
+
   
 async def terabox_dm(client, message):
     try:
@@ -259,16 +281,9 @@ async def terabox_dm(client, message):
           return await message.reply_text("No Url Found")
        if not await check_url_patterns_async(str(url)):
                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                              
-       files = await get_file_ids(url)
+       files = await is_file_ids(url)
        if files:
-           for file, link in files:
-              try:
-                  await app.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-              except FloodWait as e:
-                  await asyncio.sleep(e.value)
-              except Exception as e:
-                  continue
-           return
+           return await handle_files(client, message, url)
        if user_id in queue_url:
              return await message.reply_text("Only One Url at a Time")
        queue_url[user_id] = True
@@ -315,8 +330,8 @@ async def terabox_func(client, message, nil, url):
                          try:                           
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                               dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
-                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, duration=int(dur), caption="Indian")
+                         #      dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
+                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
