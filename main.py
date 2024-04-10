@@ -269,21 +269,19 @@ async def terabox_dm(client, message):
               except Exception as e:
                   continue
            return
-       if user_id in queue_url and str(url) in queue_url[user_id]:
-             return await message.reply_text("This Url is Already In Process Wait")
-       if user_id not in queue_url:
-             queue_url[user_id] = {}
-       queue_url[user_id][url] = True
+       if user_id in queue_url:
+             return await message.reply_text("Only One Url at a Time")
+       queue_url[user_id] = True
        nil = await message.reply_text("🔎 Processing URL...", quote=True)
-       asyncio.create_task(terabox_func(client, message, nil, url))
+       await terabox_func(client, message, nil, url)
     except FloodWait as e:
           await asyncio.sleep(e.value)
     except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
     finally:
-            if user_id in queue_url and str(url) in queue_url[user_id]:
-                del queue_url[user_id][url]
+            if user_id in queue_url:
+                del queue_url[user_id]
                 
 
     
