@@ -258,6 +258,10 @@ async def terabox_dm(client, message):
         if not urls:
           return await message.reply_text("No Urls Found")
         try:
+            user_id = int(message.from_user.id)
+            if user_id in queue_url:
+                return await message.reply_text("One Url At a Time")                
+            queue_url[user_id] = True
             for url in urls:
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
@@ -271,13 +275,7 @@ async def terabox_dm(client, message):
                       await asyncio.sleep(e.value)
                     except Exception as e:
                        continue
-                  continue                
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        return await message.reply_text("This Url is Already In Process Wait")
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
+                  continue                               
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -337,7 +335,6 @@ async def terabox_dm(client, message):
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
         finally:
-            user_id = int(message.from_user.id)
             if user_id in queue_url:
                 del queue_url[user_id]
 
