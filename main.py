@@ -294,7 +294,7 @@ async def terabox_dm(client, message):
                             await nil.edit_text("Completed")
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
-                else:
+                 else:
                             await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
                             await nil.edit_text("Completed")                     
                       except FloodWait as e:
