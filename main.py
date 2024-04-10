@@ -29,7 +29,7 @@ rokendb = db.roken
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7121574962:AAES7Ig4uxQ7MDW-qhtB6OMc_Cp8pthaEr8"
+BOT_TOKEN = "7121574962:AAHGKpXiEb22KselVFhIyWxCd-8_ub7m3lg"
 
 queue_url = {}
 joined = set()
@@ -448,7 +448,7 @@ async def terabox_dm(client, message):
 async def remove_tokens():
         while True:
           try:
-            await asyncio.sleep(60)
+            await asyncio.sleep(10)
             current_time = datetime.now()
             filter_query = {"timer_after": {"$lt": current_time}}
             deleted_documents = await tokendb.find(filter_query).to_list(None)
