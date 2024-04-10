@@ -32,6 +32,7 @@ API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
 BOT_TOKEN = "7121574962:AAHrSOd_JuowVyeLd2PquKDlZrl8KUWAb-k"
 
 queue_url = {}
+joined = set()
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -154,14 +155,17 @@ async def get_file_ids(url):
 
 
 async def is_join(user_id):
+  if user_id not in joined:
     try:
         await app.get_chat_member(-1001885839902, user_id)  
    #     await app.get_chat_member(-1001922006659, user_id)
+        joined.add(user_id)
         return True
     except UserNotParticipant:
         return False  
     except FloodWait as e:
         await asyncio.sleep(e.value)
+        
 
 
 
