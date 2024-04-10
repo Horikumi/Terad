@@ -69,31 +69,32 @@ START_TIME = time.time()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
-token_dict = {}
-token_cache = set()
 
 async def get_token():
   chat_id = 12345
   document = {"chat_id": chat_id}
   hek = await rokendb.find_one(document)
-  token_dict[chat_id] = hek['token']
-  
+  return hek['token']
 
 async def save_token(chat_id):
     if not await is_token(chat_id):
         timer_after = datetime.now() + timedelta(minutes=1440)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
-        token_cache.add(chat_id)
+        
 
 async def is_token(chat_id):
-    return chat_id in token_cache
-
+    document = {"chat_id": chat_id}
+    hek = await tokendb.find_one(document)
+    if hek:
+      return True
+    else:
+      return False
         
 async def delete_token(chat_id):
       await tokendb.delete_one({"chat_id": chat_id})         
-      token_cache.discard(chat_id)
-  
+
+
 async def remove_file(unique_id):
     await file_collection.delete_one({'unique_id': unique_id})
 
@@ -358,7 +359,7 @@ async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
             return await message.reply_text("you need to join @CheemsBackup before using me")
         if not await is_token(message.from_user.id):
-            token = token_dict.get(12345)
+            token = await get_token()
             keyboard = InlineKeyboardMarkup([
                  [InlineKeyboardButton("Refresh Token", url=token)],
                  [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
@@ -456,30 +457,21 @@ async def remove_tokens():
         while True:
           try:
             await asyncio.sleep(60)
-            await get_token()
             current_time = datetime.now()
             filter_query = {"timer_after": {"$lt": current_time}}
             deleted_documents = await tokendb.find(filter_query).to_list(None)
             for document in deleted_documents:
                 chat_id = document.get("chat_id")           
                 try:
-                    await delete_token(chat_id)
-                    await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
-                except FloodWait as e:
-                    await asyncio.sleep(e.value)
+                    await delete_token(chat_id)                  
                 except Exception as e:
                     print(e)
           except Exception as e:
             print(f"Error in delete_videos loop: {e}")
 
-async def extract_tokens():
-    async for document in tokendb.find({}, {"chat_id": 1}):
-        chat_id = document["chat_id"]
-        token_cache.add(chat_id)
-      
+
+
 async def init():
-    await get_token()
-    await extract_tokens()
     await app.start()
     asyncio.create_task(remove_tokens())
     print("[LOG] - Yukki Chat Bot Started")
