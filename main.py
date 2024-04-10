@@ -13,7 +13,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
+from tools import get_data, fetch_download_link_async, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -247,7 +247,7 @@ box_filter = filters.create(box_fil)
 @app.on_message(box_filter)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
-
+  
 
 async def terabox_dm(client, message):
         if not await is_join(message.from_user.id):
