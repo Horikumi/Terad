@@ -238,9 +238,8 @@ async def broadcast_func(_, message: Message):
 
 
 def box_fil(_, __, message):
-    if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
-        text = message.text or message.caption
-        return "tera" in text or "box" in text
+    if message.chat.type == enums.ChatType.PRIVATE and message.text:
+         return "tera" in message.text or "box" in message.text
 
 box_filter = filters.create(box_fil)
 
