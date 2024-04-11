@@ -335,7 +335,6 @@ async def remove_tokens():
 
 async def init():
     await app.start()
-    asyncio.create_task(queuedm_processor(app))
     asyncio.create_task(remove_tokens())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
