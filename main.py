@@ -260,7 +260,6 @@ semaphore = asyncio.Semaphore(5)
 
 
 async def terabox_dm(client, message):
-  async with semaphore:
     try: 
         user_id = int(message.from_user.id)
         if not await is_join(message.from_user.id):
@@ -288,11 +287,12 @@ async def terabox_dm(client, message):
             queue_url[user_id] = {}
         queue_url[user_id][url] = True
         nil = await message.reply_text("🔎 Processing URL...", quote=True)
-        link_data = await fetch_download_link_async(url)
-        if link_data is None:
-            return await message.reply_text("No download link available for this URL", quote=True)
-        name, size, size_bytes, dlink, thumb  = await get_data(link_data)
-        if dlink:
+        async with semaphore:
+         link_data = await fetch_download_link_async(url)
+         if link_data is None:
+             return await message.reply_text("No download link available for this URL", quote=True)
+         name, size, size_bytes, dlink, thumb  = await get_data(link_data)
+         if dlink:
             try:                        
                 if int(size_bytes) < 314572800 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                     ril = await client.send_video(-1002069870125, dlink, caption="Indian")
