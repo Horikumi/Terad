@@ -65,18 +65,10 @@ async def download_file(url, file_path, retry_count=0):
             print(f"Retrying... (Attempt {retry_count + 1})")
             return download_file(url, file_path, retry_count + 1)
         else:
-            print("Maximum retry attempts reached.")
-            try:
-                os.remove(file_path)
-            except:
-                pass
+            print("Maximum retry attempts reached.")            
             return None
     except Exception as e:
         print(f"Error occurred: {e}")
-        try:
-            os.remove(file_path)
-        except:
-            pass
         return None
 
 
