@@ -302,11 +302,11 @@ async def terabox_func(client, message, nil, url):
                 if dlink:
                       try:                        
                          if int(size_bytes) < 314572800 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
-                            ril = await client.send_video(message.chat.id, dlink)
+                            ril = await client.send_video(-1002069870125, dlink, caption="Indian")
                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                            direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"                                     
-                            await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                            direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                            await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                             await nil.edit_text("Completed")
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
@@ -320,11 +320,12 @@ async def terabox_func(client, message, nil, url):
                          try:                           
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                               ril = await client.send_video(message.chat.id, vid_path, thumb=thumb_path)
+                            #   dur = await loop.run_in_executor(None, get_duration, vid_path)                                                                 
+                               ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                               await ril.edit_caption(caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                               await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                await nil.edit_text("Completed")
                                await store_file(unique_id, file_id)
                                await store_url(url, file_id, unique_id, direct_url)
