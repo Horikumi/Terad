@@ -189,13 +189,13 @@ async def token_fun(client, message):
 
 @app.on_message(filters.command("terabox") & filters.private)
 async def tera_run(client, message: Message): 
+    command_parts = message.text.split(maxsplit=1)
+    if len(command_parts) == 1:
+        return await message.reply_text("**Usage**:\n/terabox your url here")
     if not await is_join(message.from_user.id):
           return await message.reply_text("you need to join @CheemsBackup before using me")
     if not await tokendb.find_one({"chat_id": message.from_user.id}):
-          return await token_fun(client, message)
-    command_parts = message.text.split(maxsplit=1)
-    if len(command_parts) == 1:
-        return await message.reply_text("**Usage**:\n/terabox your url here")    
+          return await token_fun(client, message)    
     message.text = command_parts[1]
     asyncio.create_task(terabox_dm(client, message))
 
