@@ -262,7 +262,7 @@ async def terabox_func(client, message):
         urls = extract_links(message.text)
         if not urls:
           return await message.reply_text("No Urls Found")
-        if not await is_join(client, message.from_user.id):
+        if not await is_join(message.from_user.id):
               return await message.reply_text("First Join @CheemsBackup to Use me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
               return await token_fun(client, message)
