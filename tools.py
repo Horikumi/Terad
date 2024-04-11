@@ -103,17 +103,18 @@ def download_thumb(url: str):
 async def download_thumb(url):
     try:
         random_uuid = uuid.uuid4()
-        uuid_string = str(random_uuid)
-        filename = f"downloads/{uuid_string}.jpeg"
+        filename = f"downloads/{random_uuid}.jpeg"
         response = requests.get(url)
         if response.status_code == 200:
             image_bytes = BytesIO(response.content)
             image_bytes.name = filename
             return image_bytes
         else:
-            return None
-    except:
+          return None
+    except Exception as e:
+        print(e)
         return None
+
         
 def get_duration(file_path):
     command = [
