@@ -1,4 +1,4 @@
-import asyncio, re, random, aiohttp, uuid, json
+import asyncio, re, random, aiohttp, uuid, os
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners, humanfriendly
@@ -65,11 +65,20 @@ def download_file(url, file_path, retry_count=0):
             print(f"Retrying... (Attempt {retry_count + 1})")
             return download_file(url, file_path, retry_count + 1)
         else:
-            print("Maximum retry attempts reached.")            
+            print("Maximum retry attempts reached.")
+            try:
+                os.remove(file_path)
+            except:
+                pass
             return None
     except Exception as e:
         print(f"Error occurred: {e}")
+        try:
+            os.remove(file_path)
+        except:
+            pass
         return None
+
 
 
 def download_thumb(url: str):
@@ -83,25 +92,14 @@ def download_thumb(url: str):
             f.write(response.content)
         return filename    
     except Exception as e:
+        print(f"Error downloading image: {e}")
+        try:
+            os.remove(filename)
+        except:
+            pass
         return None
 
-"""
-def download_thumb(url):
-    try:
-        random_uuid = uuid.uuid4()
-        filename = f"downloads/{random_uuid}.jpeg"
-        response = requests.get(url)
-        if response.status_code == 200:
-            image_bytes = BytesIO(response.content)
-            image_bytes.name = filename
-            return image_bytes
-        else:
-          return None
-    except Exception as e:
-        print(e)
-        return None
-"""
-        
+
 def get_duration(file_path):
     command = [
         "ffprobe",
@@ -241,33 +239,32 @@ async def get_direct_link(url):
   
 async def get_data(link_data):
   try:
-    file_name = link_data[0]["server_filename"]
-    file_size = await get_formatted_size_async(link_data[0]["size"])
-    download_link = await get_direct_link(link_data[0]["dlink"])
+    file_name = link_data["server_filename"]
+    file_size = await get_formatted_size_async(link_data["size"])
+    download_link = await get_direct_link(link_data["dlink"])
     if not download_link:
-        download_link = await get_url(link_data[0]["dlink"])
+        download_link = await get_url(link_data["dlink"])
         if not download_link:
            url = random.choice(download_urls)
-           download_link = url + link_data[0]["dlink"][link_data[0]["dlink"].index("/", 8):]
-   # download_link = rapi.tinyurl.short(download_link)
-    thumb = link_data[0]["thumbs"]["url3"]
-    return file_name, file_size, link_data[0]["size"], download_link, thumb
+           download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
+    download_link = rapi.tinyurl.short(download_link)
+    thumb = link_data["thumbs"]["url3"]
+    return file_name, file_size, link_data["size"], download_link, thumb
   except Exception as e:
     print(e)
     return None, None, None, None, None
 
-async def extract_link(message):
+def extract_links(message):
+    # fetch all links
     try:
-        url_pattern = r'https?://\S+'
-        match = re.search(url_pattern, message)        
-        if match:
-            return match.group(0)
-        else:
-            return None  # Return None if no match found       
-    except Exception as e:
-        print(f"Error extracting link: {e}")
-        return None  # Return None on any exception
+        url_pattern = r'https?://\S+'        
+        matches = re.findall(url_pattern, message)
 
+        return matches
+    except Exception as e:
+        print(f"Error extracting links: {e}")
+        return []
+        
 
 async def get_formatted_size_async(size_bytes):
     try:
@@ -345,25 +342,4 @@ async def extract_code(url: str):
     if match:
         return match.group(1)
     return url
-
-
-async def shorten_url_async(destination_link):
-    api_url = f'https://adrinolinks.in/api?api=bd1171dd3ccb6e43fc6e31876df0871a29e9c794&url={destination_link}'
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url) as response:
-                if response.status == 200:
-                    data = await response.json()               
-                    if 'shortenedUrl' in data:
-                        shortened_url = data['shortenedUrl']                        
-                        return shortened_url
-                    else:
-                        print("Shortened URL not found in the response")
-                        return None
-                else:
-                    print(f"Request failed with status code: {response.status}")
-                    return None
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return None
-
+      
