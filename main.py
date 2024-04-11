@@ -174,7 +174,7 @@ async def start_func(client, message):
             # token = message.command[1].replace("token", "")
              await message.reply_text("🎉 Token Activated 🎉")
              return await save_token(message.from_user.id)
-    await message.reply_text("**Usage**:\n/terabox your url here")
+    await message.reply_text("Send Only Terabox Urls")
     return await add_served_user(message.chat.id)
 
 
