@@ -46,7 +46,7 @@ def download_file(url: str, filename):
         
 """
 
-async def download_file(url, file_path, retry_count=0):    
+def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -92,7 +92,7 @@ def download_thumb(url: str):
         return None
 """
 
-async def download_thumb(url):
+def download_thumb(url):
     try:
         random_uuid = uuid.uuid4()
         filename = f"downloads/{random_uuid}.jpeg"
