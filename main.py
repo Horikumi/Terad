@@ -32,7 +32,6 @@ API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
 BOT_TOKEN = "7121574962:AAG9rKq8GyIZz6kQU0bT-EnJnkXoCzG5f4M"
 
 queue_url = {}
-queue_list = []
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -282,6 +281,12 @@ async def terabox_func(client, message):
                        except Exception as e:
                            continue
                    continue
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 nil = await message.reply_text("🔎 Processing URL...", quote=True)
                 try:
                    link_data = await fetch_download_link_async(url)
@@ -312,7 +317,9 @@ async def terabox_func(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-
+        finally:
+            if user_id in queue_url:
+                 del queue_url[user_id]
 
 
 
