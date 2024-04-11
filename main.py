@@ -256,8 +256,11 @@ box_filter = filters.create(box_fil)
 async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
+semaphore = asyncio.Semaphore(5)
+
 
 async def terabox_dm(client, message):
+  async with semaphore:
     try: 
         user_id = int(message.from_user.id)
         if not await is_join(message.from_user.id):
