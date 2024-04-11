@@ -253,7 +253,7 @@ def box_fil(_, __, message):
 box_filter = filters.create(box_fil)
 
 @app.on_message(box_filter)
-async def private_message_handler(client, message):
+async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
 
