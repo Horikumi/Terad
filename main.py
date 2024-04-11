@@ -160,6 +160,9 @@ async def is_join(user_id):
 
 @app.on_message(filters.command("start") & filters.private)
 async def start_fun(client, message: Message):
+    asyncio.create_task(start_func(client, message)
+                       
+async def start_func(client, message):
     if len(message.command) > 1 and "unqid" in message.command[1]:              
              unq_id = message.command[1].replace("unqid", "")
              file_id = await get_file(unq_id)
