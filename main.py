@@ -256,7 +256,7 @@ box_filter = filters.create(box_fil)
 async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
-semaphore = asyncio.Semaphore(10)
+semaphore = asyncio.Semaphore(15)
 
 
 async def terabox_dm(client, message):
@@ -286,12 +286,13 @@ async def terabox_dm(client, message):
         if user_id not in queue_url:
             queue_url[user_id] = {}
         queue_url[user_id][url] = True
-        nil = await message.reply_text("🔎 Processing URL...", quote=True)        
+        nil = await message.reply_text("🔎 Processing URL...", quote=True)
         link_data = await fetch_download_link_async(url)
         if link_data is None:
              return await message.reply_text("No download link available for this URL", quote=True)
-        name, size, size_bytes, dlink, thumb  = await get_data(link_data)
-        if dlink:
+        async with semaphore:
+          name, size, size_bytes, dlink, thumb  = await get_data(link_data)
+          if dlink:
             try:                        
                 if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                     ril = await client.send_video(-1002069870125, dlink, caption="Indian")
@@ -309,8 +310,7 @@ async def terabox_dm(client, message):
                 await asyncio.sleep(e.value)
             except Exception as e:
                 print(e)
-                async with semaphore:
-                 try:              
+                try:                           
                     vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                     thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                     ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
@@ -321,13 +321,13 @@ async def terabox_dm(client, message):
                     await nil.edit_text("Completed")
                     await store_file(unique_id, file_id)
                     await store_url(url, file_id, unique_id, direct_url)
-                 except FloodWait as e:
+                except FloodWait as e:
                     await asyncio.sleep(e.value)
-                 except Exception as e:
+                except Exception as e:
                     print(e)                     
                     await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                     await nil.edit_text("Completed")
-                 finally:
+                finally:
                     if vid_path and os.path.exists(vid_path):
                         os.remove(vid_path)
                     if thumb_path and os.path.exists(thumb_path):
