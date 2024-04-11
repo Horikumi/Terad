@@ -46,7 +46,7 @@ def download_file(url: str, filename):
         
 """
 
-def download_file(url, file_path, retry_count=0):    
+async def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -80,7 +80,7 @@ def download_file(url, file_path, retry_count=0):
         return None
 
 
-
+"""
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -98,8 +98,23 @@ def download_thumb(url: str):
         except:
             pass
         return None
+"""
 
-
+async def download_thumb(url):
+    try:
+        random_uuid = uuid.uuid4()
+        uuid_string = str(random_uuid)
+        filename = f"downloads/{uuid_string}.jpeg"
+        response = requests.get(url)
+        if response.status_code == 200:
+            image_bytes = BytesIO(response.content)
+            image_bytes.name = filename
+            return image_bytes
+        else:
+            return None
+    except:
+        return None
+        
 def get_duration(file_path):
     command = [
         "ffprobe",
