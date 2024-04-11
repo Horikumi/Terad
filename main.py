@@ -256,7 +256,7 @@ box_filter = filters.create(box_fil)
 async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
-semaphore = asyncio.Semaphore(5)
+semaphore = asyncio.Semaphore(10)
 
 
 async def terabox_dm(client, message):
