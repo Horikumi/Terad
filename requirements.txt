@@ -8,7 +8,6 @@ gunicorn
 Flask
 uvloop
 pyshorteners
-python-ffmpeg
 requests
 aiohttp
 gitpython
