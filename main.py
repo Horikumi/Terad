@@ -331,11 +331,9 @@ async def terabox_func(client, message, nil, url):
                       except Exception as e:
                          print(e)
                          try:                           
-                             #  vid_path = await loop.run_in_executor(None, download_file, dlink, name)
-                            #   thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                            #   dur = await loop.run_in_executor(None, get_duration, vid_path) 
-                               vid_path = await download_file(dlink, name)
-                               thumb_path = await download_thumb(thumb)
+                               vid_path = await loop.run_in_executor(None, download_file, dlink, name)
+                               thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
+                             #  dur = await loop.run_in_executor(None, get_duration, vid_path)                                
                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
