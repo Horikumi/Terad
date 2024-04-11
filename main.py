@@ -267,16 +267,6 @@ async def private_message_handler(client, message):
 
 """
 
-@app.on_message(filters.text & filters.private)
-async def tera_private(client, message: Message):
-    if "tera" in message.text or "box" in message.text:
-       if not await is_join(message.from_user.id):
-           return await message.reply_text("you need to join @CheemsBackup before using me")
-       if not await tokendb.find_one({"chat_id": message.from_user.id}):
-           return await token_fun(client, message)    
-       asyncio.create_task(terabox_dm(client, message))
-
-
 async def terabox_dm(client, message):
     try: 
        user_id = int(message.from_user.id)
@@ -382,6 +372,16 @@ async def remove_tokens():
                     print(e)
           except Exception as e:
             print(f"Error in delete_videos loop: {e}")
+
+
+@app.on_message(filters.text & filters.private)
+async def tera_private(client, message: Message):
+    if "tera" in message.text or "box" in message.text:
+       if not await is_join(message.from_user.id):
+           return await message.reply_text("you need to join @CheemsBackup before using me")
+       if not await tokendb.find_one({"chat_id": message.from_user.id}):
+           return await token_fun(client, message)    
+       asyncio.create_task(terabox_dm(client, message))
 
 
 
