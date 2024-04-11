@@ -311,7 +311,7 @@ async def terabox_func(client, message):
                          await store_url(url, file_id, unique_id, direct_url)
                       except Exception as e:
                          print(e)
-                         await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")                                               
+                         await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")                                               
         except FloodWait as e:
             await asyncio.sleep(e.value)
         except Exception as e:
