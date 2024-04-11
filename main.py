@@ -281,7 +281,37 @@ async def teraboxdm_process(client, message):
              except Exception as e:
                 continue
           continue
-       valid_urls.append(url)
+       nil = await message.reply_text("🔎 Processing URL...", quote=True)
+       try:
+          link_data = await fetch_download_link_async(url)
+          if link_data is None:
+              await message.reply_text("No download link available for this URL", quote=True)
+              continue
+       except Exception as e:
+              print(e)
+              await message.reply_text("Some Error Occurred", quote=True)
+              continue
+       for link in link_data:
+             name, size, size_bytes, dlink, thumb  = await get_data(link)
+             if dlink:
+                 try:                        
+                    if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                        ril = await client.send_video(-1002069870125, dlink, caption="Indian")
+                        file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+                        unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
+                        direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                        await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                        await nil.edit_text("Completed")
+                        await store_file(unique_id, file_id)
+                        await store_url(url, file_id, unique_id, direct_url)
+                    else:
+                        await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")
+                        await nil.edit_text("Completed")                     
+                  except FloodWait as e:
+                         await asyncio.sleep(e.value)
+                  except Exception as e:
+                         print(e)
+                         valid_urls.add(user_id)
     if valid_urls:
        queue_list.append((message, valid_urls))
        queue_length = len(queue_list)
@@ -311,37 +341,19 @@ async def queuedm_processor(client):
 
 async def terabox_dm(client, message, urls):        
         try:
-            for url in urls:                                                           
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
+            for url in urls:
                 try:
                    link_data = await fetch_download_link_async(url)
                    if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
+                        await message.reply_text("No download link available for this URL", quote=True)
+                        continue
                 except Exception as e:
-                   print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
+                      print(e)
+                      await message.reply_text("Some Error Occurred", quote=True)
+                      continue
                 for link in link_data:
                     name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
-                      try:                        
-                         if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
-                            ril = await client.send_video(-1002069870125, dlink, caption="Indian")
-                            file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                            unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                            direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                            await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                            await nil.edit_text("Completed")
-                            await store_file(unique_id, file_id)
-                            await store_url(url, file_id, unique_id, direct_url)
-                         else:
-                             await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")
-                             await nil.edit_text("Completed")                     
-                      except FloodWait as e:
-                         await asyncio.sleep(e.value)
-                      except Exception as e:
-                         print(e)
+                    if dlink:                                  
                          try:                           
                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
