@@ -161,7 +161,8 @@ async def is_join(user_id):
 @app.on_message(filters.command("start") & filters.private)
 async def start_fun(client, message: Message):
     asyncio.create_task(start_func(client, message))
-  
+
+
 async def start_func(client, message):
     if len(message.command) > 1 and "unqid" in message.command[1]:              
              unq_id = message.command[1].replace("unqid", "")
@@ -173,7 +174,7 @@ async def start_func(client, message):
             # token = message.command[1].replace("token", "")
              await message.reply_text("🎉 Token Activated 🎉")
              return await save_token(message.from_user.id)
-    await message.reply_text("Send Only Terabox urls")
+    await message.reply_text("**Usage**:\n/terabox your url here")
     return await add_served_user(message.chat.id)
 
 
@@ -184,6 +185,19 @@ async def token_fun(client, message):
                  [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
         ])
         return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 12 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 12 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
+
+
+@app.on_message(filters.command("terabox") & filters.private)
+async def tera_run(client, message: Message): 
+    if not await is_join(message.from_user.id):
+          return await message.reply_text("you need to join @CheemsBackup before using me")
+    if not await tokendb.find_one({"chat_id": message.from_user.id}):
+          return await token_fun(client, message)
+    command_parts = message.text.split(maxsplit=1)
+    if len(command_parts) == 1:
+        return await message.reply_text("**Usage**:\n/terabox your url here")    
+    message.text = command_parts[1]
+    asyncio.create_task(terabox_dm(client, message))
 
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(SUDO_USERS))
@@ -238,8 +252,9 @@ async def broadcast_func(_, message: Message):
         )
     except:
         pass
+      
 
-
+"""
 def box_fil(_, __, message):
     if message.chat.type == enums.ChatType.PRIVATE and message.text:
          return "tera" in message.text or "box" in message.text
@@ -249,14 +264,12 @@ box_filter = filters.create(box_fil)
 @app.on_message(box_filter)
 async def private_message_handler(client, message):
         asyncio.create_task(terabox_dm(client, message))
-  
+
+"""
+
 async def terabox_dm(client, message):
-    try:
-       user_id = int(message.from_user.id) 
-       if not await is_join(message.from_user.id):
-            return await message.reply_text("you need to join @CheemsBackup before using me")
-       if not await tokendb.find_one({"chat_id": message.from_user.id}):
-            return await token_fun(client, message)            
+    try: 
+       user_id = int(message.from_user.id)
        url = await extract_link(message.text)
        if not url:
           return await message.reply_text("No Url Found")
