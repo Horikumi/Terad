@@ -301,7 +301,7 @@ async def terabox_func(client, message, nil, url):
                 name, size, size_bytes, dlink, thumb  = await get_data(link_data)
                 if dlink:
                       try:                        
-                         if int(size_bytes) < 524288000 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
+                         if int(size_bytes) < 314572800 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                             ril = await client.send_video(-1002069870125, dlink, caption="Indian")
                             file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                             unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
@@ -311,7 +311,7 @@ async def terabox_func(client, message, nil, url):
                             await store_file(unique_id, file_id)
                             await store_url(url, file_id, unique_id, direct_url)
                          else:
-                            await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+                            await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                             await nil.edit_text("Completed")                     
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
@@ -333,7 +333,7 @@ async def terabox_func(client, message, nil, url):
                               await asyncio.sleep(e.value)
                          except Exception as e:
                            print(e)                     
-                           await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}", quote=True)
+                           await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                            await nil.edit_text("Completed")
                          finally:
                                 if vid_path and os.path.exists(vid_path):
