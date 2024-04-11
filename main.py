@@ -286,13 +286,12 @@ async def terabox_dm(client, message):
         if user_id not in queue_url:
             queue_url[user_id] = {}
         queue_url[user_id][url] = True
-        nil = await message.reply_text("🔎 Processing URL...", quote=True)
-        async with semaphore:
-         link_data = await fetch_download_link_async(url)
-         if link_data is None:
+        nil = await message.reply_text("🔎 Processing URL...", quote=True)        
+        link_data = await fetch_download_link_async(url)
+        if link_data is None:
              return await message.reply_text("No download link available for this URL", quote=True)
-         name, size, size_bytes, dlink, thumb  = await get_data(link_data)
-         if dlink:
+        name, size, size_bytes, dlink, thumb  = await get_data(link_data)
+        if dlink:
             try:                        
                 if int(size_bytes) < 314572800 and name.lower().endswith(('.mp4', '.mkv', '.webm', '.Mkv')):
                     ril = await client.send_video(-1002069870125, dlink, caption="Indian")
@@ -310,7 +309,8 @@ async def terabox_dm(client, message):
                 await asyncio.sleep(e.value)
             except Exception as e:
                 print(e)
-                try:                           
+                try:
+                  async with semaphore:
                     vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                     thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                     ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
