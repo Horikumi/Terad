@@ -309,8 +309,8 @@ async def terabox_dm(client, message):
                 await asyncio.sleep(e.value)
             except Exception as e:
                 print(e)
-                try:
-                  async with semaphore:
+                async with semaphore:
+                 try:              
                     vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                     thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
                     ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
@@ -321,13 +321,13 @@ async def terabox_dm(client, message):
                     await nil.edit_text("Completed")
                     await store_file(unique_id, file_id)
                     await store_url(url, file_id, unique_id, direct_url)
-                except FloodWait as e:
+                 except FloodWait as e:
                     await asyncio.sleep(e.value)
-                except Exception as e:
+                 except Exception as e:
                     print(e)                     
                     await message.reply_text(f"**Failed To Download Media Try Downloading using Download Link.**\n\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", quote=True)
                     await nil.edit_text("Completed")
-                finally:
+                 finally:
                     if vid_path and os.path.exists(vid_path):
                         os.remove(vid_path)
                     if thumb_path and os.path.exists(thumb_path):
