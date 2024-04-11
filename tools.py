@@ -72,7 +72,6 @@ def download_file(url, file_path, retry_count=0):
         return None
 
 
-"""
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -84,14 +83,9 @@ def download_thumb(url: str):
             f.write(response.content)
         return filename    
     except Exception as e:
-        print(f"Error downloading image: {e}")
-        try:
-            os.remove(filename)
-        except:
-            pass
         return None
-"""
 
+"""
 def download_thumb(url):
     try:
         random_uuid = uuid.uuid4()
@@ -106,7 +100,7 @@ def download_thumb(url):
     except Exception as e:
         print(e)
         return None
-
+"""
         
 def get_duration(file_path):
     command = [
