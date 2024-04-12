@@ -341,9 +341,7 @@ async def terabox_func(client, message):
                 if files:
                    for file, link in files:
                        try:
-                           await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                       except FloodWait as e:
-                           await asyncio.sleep(e.value)
+                           await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")                       
                        except Exception as e:
                            continue
                    continue
