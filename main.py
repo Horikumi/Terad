@@ -247,8 +247,8 @@ async def broadcast_func(_, message: Message):
 
 
 def box_fil(_, __, message):
-    if message.chat.type == enums.ChatType.PRIVATE and message.text:
-         return "tera" in message.text
+    if message.chat.type == enums.ChatType.PRIVATE and (message.text or message.caption):
+        return ("tera" in message.text or "box" in message.text) or ("tera" in message.caption or "box" in message.caption)
 
 box_filter = filters.create(box_fil)
 
@@ -259,7 +259,7 @@ async def tera_private(client, message):
 
 
 async def terabox_func(client, message):
-        urls = extract_links(message.text)
+        urls = extract_links(message.text or message.caption)
         if not urls:
           return await message.reply_text("No Urls Found")
         if not await is_join(message.from_user.id):
