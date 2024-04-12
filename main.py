@@ -377,10 +377,10 @@ async def terabox_func(client, message):
                          await store_url(url, file_id, unique_id, direct_url)
                       except Exception as e:
                          print(e)
-                         try:
-                            if int(size_bytes) > 524288000 and not name.lower().endswith(('.mp4', '.mkv', '.webm')):
+                         if int(size_bytes) > 524288000 and not name.lower().endswith(('.mp4', '.mkv', '.webm')):
                                   await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                            else:
+                         else:
+                             try:
                                 vid_path = await loop.run_in_executor(None, download_file, dlink, name)
                                 thumb_path = await loop.run_in_executor(None, download_thumb, thumb)                                                                                       
                                 ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
@@ -391,6 +391,7 @@ async def terabox_func(client, message):
                                 await nil.edit_text("Completed")
                                 await store_file(unique_id, file_id)
                                 await store_url(url, file_id, unique_id, direct_url)
+                             except 
         except FloodWait as e:
             await asyncio.sleep(e.value)
         except Exception as e:
