@@ -390,6 +390,11 @@ async def terabox_func(client, message):
                                 direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                 await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                 await nil.edit_text("Completed")
+                                try:
+                                    os.remove(vid_path)
+                                    os.remove(thumb_path)
+                                except:
+                                    pass
                                 await store_file(unique_id, file_id)
                                 await store_url(url, file_id, unique_id, direct_url)
                              except Exception as e:
@@ -401,8 +406,7 @@ async def terabox_func(client, message):
                                          os.remove(vid_path)
                                     if thumb_path and os.path.exists(thumb_path):
                                          os.remove(thumb_path)
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
+                                      
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
