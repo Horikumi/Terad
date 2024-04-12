@@ -257,7 +257,7 @@ async def tera_private(client, message):
         asyncio.create_task(terabox_func(client, message))
 
 
-
+"""
 async def terabox_func(client, message):
         urls = extract_links(message.text)
         if not urls:
@@ -312,6 +312,85 @@ async def terabox_func(client, message):
                       except Exception as e:
                          print(e)
                          await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")                                               
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+        except Exception as e:
+            print(e)
+            await message.reply_text("Some Error Occurred", quote=True)
+        finally:
+            if user_id in queue_url:
+                 del queue_url[user_id]
+
+"""
+
+
+async def terabox_func(client, message):
+        urls = extract_links(message.text)
+        if not urls:
+          return await message.reply_text("No Urls Found")
+        if not await is_join(message.from_user.id):
+              return await message.reply_text("First Join @CheemsBackup to Use me")
+        if not await tokendb.find_one({"chat_id": message.from_user.id}):
+              return await token_fun(client, message)
+        try:
+            for url in urls:
+                if not await check_url_patterns_async(str(url)):
+                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
+                    continue
+                files = await get_file_ids(url)
+                if files:
+                   for file, link in files:
+                       try:
+                           await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                       except FloodWait as e:
+                           await asyncio.sleep(e.value)
+                       except Exception as e:
+                           continue
+                   continue
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
+                nil = await message.reply_text("🔎 Processing URL...", quote=True)
+                try:
+                   link_data = await fetch_download_link_async(url)
+                   if link_data is None:
+                       await message.reply_text("No download link available for this URL", quote=True)
+                       continue
+                except Exception as e:
+                   print(e)
+                   await message.reply_text("Some Error Occurred", quote=True)
+                   continue 
+                for link in link_data:
+                    name, size, size_bytes, dlink, thumb  = await get_data(link)
+                    if dlink:
+                      try:                        
+                         ril = await client.send_video(-1002069870125, dlink, caption="Indian")
+                         file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+                         unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
+                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                         await nil.edit_text("Completed")
+                         await store_file(unique_id, file_id)
+                         await store_url(url, file_id, unique_id, direct_url)
+                      except Exception as e:
+                         print(e)
+                         try:
+                            if int(size_bytes) > 524288000 and not name.lower().endswith(('.mp4', '.mkv', '.webm')):
+                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
+                            else:
+                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
+                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)                                                                                       
+                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
+                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
+                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
+                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
+                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                                await nil.edit_text("Completed")
+                                await store_file(unique_id, file_id)
+                                await store_url(url, file_id, unique_id, direct_url)
         except FloodWait as e:
             await asyncio.sleep(e.value)
         except Exception as e:
