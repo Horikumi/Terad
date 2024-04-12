@@ -397,6 +397,11 @@ async def terabox_func(client, message):
                                 await store_url(url, file_id, unique_id, direct_url)
                              except Exception as e:
                                  print(e)
+                                 try:
+                                    os.remove(vid_path)
+                                    os.remove(thumb_path)
+                                 except:
+                                    pass                             
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                                  await nil.edit_text("Completed")
                              finally:
