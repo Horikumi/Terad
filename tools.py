@@ -45,8 +45,9 @@ def download_file(url: str, filename):
         return False
         
 """
-"""
-def download_file(url, file_path, retry_count=0):    
+
+
+async def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -79,60 +80,9 @@ def download_file(url, file_path, retry_count=0):
             pass
         return None
 
-"""
 
-async def download_file(url: str, filename: str) -> str:
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                response.raise_for_status()
-                
-                async with aiofiles.open(filename, 'wb') as file:
-                    while True:
-                        chunk = await response.content.read(1024)
-                        if not chunk:
-                            break
-                        await file.write(chunk)
-        
-        return filename
-    
-    except Exception as e:
-        print(f"Error downloading file: {e}")
-        try:
-            os.remove(filename)
-        except:
-            pass
-        return None
-
-
-async def download_thumb(url: str) -> str:
-    try:
-        random_uuid = uuid.uuid4()
-        uuid_string = str(random_uuid)
-        filename = f"downloads/{uuid_string}.jpeg"
-        
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                response.raise_for_status()           
-                async with aiofiles.open(filename, 'wb') as file:
-                    while True:
-                        chunk = await response.content.read()
-                        if not chunk:
-                            break
-                        await file.write(chunk)
-        
-        return filename
-    
-    except Exception as e:
-        print(f"Error downloading image: {e}")
-        try:
-            os.remove(filename)
-        except:
-            pass
-        return None
-
-"""  
-def download_thumb(url: str):
+ 
+async def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
@@ -150,7 +100,6 @@ def download_thumb(url: str):
             pass
         return None
 
-"""
 
 def get_duration(file_path):
     command = [
