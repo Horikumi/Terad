@@ -3,7 +3,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
-import re, json, aiohttp, random
+import re, json, aiohttp, random, aiofiles
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
@@ -45,7 +45,7 @@ def download_file(url: str, filename):
         return False
         
 """
-
+"""
 def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
@@ -79,8 +79,59 @@ def download_file(url, file_path, retry_count=0):
             pass
         return None
 
+"""
+
+async def download_file(url: str, filename: str) -> str:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response.raise_for_status()
+                
+                async with aiofiles.open(filename, 'wb') as file:
+                    while True:
+                        chunk = await response.content.read(1024)
+                        if not chunk:
+                            break
+                        await file.write(chunk)
+        
+        return filename
+    
+    except aiohttp.ClientError as e:
+        print(f"Error downloading file: {e}")
+        try:
+            os.remove(filename)
+        except:
+            pass
+        return None
 
 
+async def download_thumb(url: str) -> str:
+    try:
+        random_uuid = uuid.uuid4()
+        uuid_string = str(random_uuid)
+        filename = f"downloads/{uuid_string}.jpeg"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response.raise_for_status()           
+                async with aiofiles.open(filename, 'wb') as file:
+                    while True:
+                        chunk = await response.content.read(1024)
+                        if not chunk:
+                            break
+                        await file.write(chunk)
+        
+        return filename
+    
+    except aiohttp.ClientError as e:
+        print(f"Error downloading image: {e}")
+        try:
+            os.remove(filename)
+        except:
+            pass
+        return None
+
+"""  
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -99,6 +150,7 @@ def download_thumb(url: str):
             pass
         return None
 
+"""
 
 def get_duration(file_path):
     command = [
