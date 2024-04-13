@@ -3,7 +3,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
-import re, json, aiohttp, random, aiofiles
+import re, json, aiohttp, random
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
@@ -47,7 +47,7 @@ def download_file(url: str, filename):
 """
 
 
-async def download_file(url, file_path, retry_count=0):    
+def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -82,7 +82,7 @@ async def download_file(url, file_path, retry_count=0):
 
 
  
-async def download_thumb(url: str):
+def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
