@@ -395,6 +395,8 @@ async def terabox_group(client, message):
                          await nil.edit_text("Completed\n\n**File Direct Link**: [Link]({direct_url})")
                          await store_file(unique_id, file_id)
                          await store_url(url, file_id, unique_id, direct_url)
+                      except FloodWait as e:
+                         await asyncio.sleep(e.value)
                       except Exception as e:
                          print(e)
                          if int(size_bytes) > 524288000 and not name.lower().endswith(('.mp4', '.mkv', '.webm')):
@@ -412,6 +414,8 @@ async def terabox_group(client, message):
                                 await nil.edit_text("Completed\n\n**File Direct Link**: [Link]({direct_url})")                                
                                 await store_file(unique_id, file_id)
                                 await store_url(url, file_id, unique_id, direct_url)
+                             except FloodWait as e:
+                                await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)                                                         
                                  await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
@@ -421,7 +425,8 @@ async def terabox_group(client, message):
                                          os.remove(vid_path)
                                     if thumb_path and os.path.exists(thumb_path):
                                          os.remove(thumb_path)
-                                      
+        except FloodWait as e:
+            await asyncio.sleep(e.value)                              
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
