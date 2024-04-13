@@ -10,6 +10,5 @@ uvloop
 pyshorteners
 requests
 aiohttp
-aiofiles
 gitpython
 humanfriendly
