@@ -327,7 +327,7 @@ async def terabox_dm(client, message):
                  del queue_url[user_id]
 
 
-
+"""
 @app.on_message(filters.chat(-1001935231841) & filters.text)
 async def message_handler(client, message):
   text = message.text
@@ -434,7 +434,7 @@ async def terabox_group(client, message):
             if user_id in queue_url:
                  del queue_url[user_id]
 
-
+"""
 
 async def remove_tokens():
         while True:
