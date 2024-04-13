@@ -96,7 +96,7 @@ async def download_file(url: str, filename: str) -> str:
         
         return filename
     
-    except aiohttp.ClientError as e:
+    except Exception as e:
         print(f"Error downloading file: {e}")
         try:
             os.remove(filename)
@@ -116,14 +116,14 @@ async def download_thumb(url: str) -> str:
                 response.raise_for_status()           
                 async with aiofiles.open(filename, 'wb') as file:
                     while True:
-                        chunk = await response.content.read(1024)
+                        chunk = await response.content.read()
                         if not chunk:
                             break
                         await file.write(chunk)
         
         return filename
     
-    except aiohttp.ClientError as e:
+    except Exception as e:
         print(f"Error downloading image: {e}")
         try:
             os.remove(filename)
