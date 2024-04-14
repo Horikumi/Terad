@@ -47,8 +47,9 @@ def download_file(url: str, filename):
         
 """
 
-async def download_file(url: str, destination: str) -> str:
+async def download_file(url: str, filename: str) -> str:
     try:
+        destination = f"downloads/{filename}"
         os.makedirs(os.path.dirname(destination), exist_ok=True)
         dl = SmartDL(url, dest=destination, progress_bar=False)
         await asyncio.to_thread(dl.start)
