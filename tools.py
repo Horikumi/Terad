@@ -5,7 +5,7 @@ import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
-from smartdl import SmartDL
+from pysmartdl2 import SmartDL
 
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
@@ -49,18 +49,13 @@ def download_file(url: str, filename):
 
 async def download_file(url: str, destination: str) -> str:
     try:
-        # Initialize SmartDL instance
+        os.makedirs(os.path.dirname(destination), exist_ok=True)
         dl = SmartDL(url, dest=destination, progress_bar=False)
-
-        # Start the download asynchronously
         await asyncio.to_thread(dl.start)
-
-        # Check if download was successful
         if dl.isSuccessful():
             return dl.get_dest()
         else:
             return None
-
     except Exception as e:
         print(f"Error downloading file: {e}")
         return None
