@@ -42,8 +42,7 @@ def download_file(url: str, filename):
         return False
 """
 
-"""
-async def download_file(url, file_path, retry_count=0):    
+def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -63,21 +62,12 @@ async def download_file(url, file_path, retry_count=0):
             return download_file(url, file_path, retry_count + 1)
         else:
             print("Maximum retry attempts reached.")
-            try:
-                os.remove(file_path)
-            except:
-                pass
-            return None
     except Exception as e:
         print(f"Error occurred: {e}")
-        try:
-            os.remove(file_path)
-        except:
-            pass
         return None
 
-"""
 
+"""
 def download_file(url: str, filename: str) -> str:
     try:
         destination = f"downloads/{filename}"
@@ -107,8 +97,8 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")      
         return None
-        
-""" 
+"""        
+
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -122,7 +112,7 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")
         return None
-"""
+
 
 def get_duration(file_path):
     command = [
