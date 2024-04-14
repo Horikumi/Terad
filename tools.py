@@ -67,7 +67,7 @@ def download_file(url, file_path, retry_count=0):
         print(f"Error occurred: {e}")
         return None
 
-
+"""
 
 def download_file(url: str, filename: str) -> str:
     try:
@@ -99,7 +99,7 @@ def download_thumb(url: str):
         print(f"Error downloading image: {e}")      
         return None
       
-
+"""
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -114,7 +114,6 @@ def download_thumb(url: str):
         print(f"Error downloading image: {e}")
         return None
 
-"""
 
 def download_thumb(url: str):
     try:
@@ -171,6 +170,7 @@ def download_file(url, file_path, retry_count=0):
         print(f"Error occurred: {e}")
         return None
 
+"""
 
 def get_duration(file_path):
     command = [
