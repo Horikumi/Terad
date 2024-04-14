@@ -39,10 +39,6 @@ def download_file(url: str, filename):
         return filename
     except Exception as e:
         print(f"Error downloading file: {e}")
-        try:
-            os.remove(filename)
-        except:
-            pass
         return False
 
 
