@@ -47,12 +47,12 @@ def download_file(url: str, filename):
         
 """
 
-async def download_file(url: str, filename: str) -> str:
+def download_file(url: str, filename: str) -> str:
     try:
         destination = f"downloads/{filename}"
         os.makedirs(os.path.dirname(destination), exist_ok=True)
         dl = SmartDL(url, dest=destination, progress_bar=False)
-        await asyncio.to_thread(dl.start)
+        dl.start()
         if dl.isSuccessful():
             return dl.get_dest()
         else:
@@ -98,14 +98,14 @@ async def download_file(url, file_path, retry_count=0):
 
 """
  
-async def download_thumb(url: str):
+def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
         filename = f"downloads/{uuid_string}.jpeg"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         dl = SmartDL(url, dest=filename, progress_bar=False)
-        await asyncio.to_thread(dl.start)
+        dl.start()
         if dl.isSuccessful():
             return dl.get_dest()
         else:
