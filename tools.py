@@ -5,7 +5,6 @@ import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
-from pysmartdl2 import SmartDL
 
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
@@ -41,6 +40,7 @@ def download_file(url: str, filename):
         print(f"Error downloading file: {e}")
         return False
 
+"""
 
 def download_file(url, file_path, retry_count=0):    
     try:
@@ -67,39 +67,7 @@ def download_file(url, file_path, retry_count=0):
         print(f"Error occurred: {e}")
         return None
 
-"""
-
-def download_file(url: str, filename: str) -> str:
-    try:
-        destination = f"downloads/{filename}"
-        os.makedirs(os.path.dirname(destination), exist_ok=True)
-        dl = SmartDL(url, dest=destination, progress_bar=False)
-        dl.start()
-        if dl.isSuccessful():
-            return dl.get_dest()
-        else:
-            return None
-    except Exception as e:
-        print(f"Error downloading file: {e}")
-        return None
-        
-def download_thumb(url: str):
-    try:
-        random_uuid = uuid.uuid4()
-        uuid_string = str(random_uuid)
-        filename = f"downloads/{uuid_string}.jpeg"
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        dl = SmartDL(url, dest=filename, progress_bar=False)
-        dl.start()
-        if dl.isSuccessful():
-            return dl.get_dest()
-        else:
-            return None  
-    except Exception as e:
-        print(f"Error downloading image: {e}")      
-        return None
-      
-"""
+    
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -115,7 +83,7 @@ def download_thumb(url: str):
         return None
 
 
-"""
+
 
 def get_duration(file_path):
     command = [
