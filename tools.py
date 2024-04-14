@@ -62,6 +62,7 @@ def download_file(url, file_path, retry_count=0):
             return download_file(url, file_path, retry_count + 1)
         else:
             print("Maximum retry attempts reached.")
+            return None
     except Exception as e:
         print(f"Error occurred: {e}")
         return None
