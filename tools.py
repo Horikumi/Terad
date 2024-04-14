@@ -1,4 +1,4 @@
-import asyncio, re, random, aiohttp, uuid, os
+import asyncio, re, random, aiohttp, uuid, os, threading 
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners, humanfriendly
@@ -40,8 +40,8 @@ def download_file(url: str, filename):
     except Exception as e:
         print(f"Error downloading file: {e}")
         return False
-"""
-"""
+
+
 def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
@@ -66,7 +66,7 @@ def download_file(url, file_path, retry_count=0):
     except Exception as e:
         print(f"Error occurred: {e}")
         return None
-"""
+
 
 
 def download_file(url: str, filename: str) -> str:
@@ -98,8 +98,8 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")      
         return None
-       
-"""
+      
+
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -115,6 +115,62 @@ def download_thumb(url: str):
         return None
 
 """
+
+def download_thumb(url: str):
+    try:
+        random_uuid = uuid.uuid4()
+        uuid_string = str(random_uuid)
+        filename = f"downloads/{uuid_string}.jpeg"
+        # Define a function for downloading the image
+        def download_image(url, filename):
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+        # Create and start a new thread for downloading the image
+        download_thread = threading.Thread(target=download_image, args=(url, filename))
+        download_thread.start()
+        return filename
+    except Exception as e:
+        print(f"Error downloading image: {e}")
+        return None
+
+
+def download_file(url, file_path, retry_count=0):
+    try:
+        # Define a function for downloading the file
+        def download(url, file_path):
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            total_size = int(response.headers.get('content-length', 0))
+
+            with open(file_path, 'ab') as file:
+                file.seek(0, os.SEEK_END)
+                downloaded_size = file.tell()
+
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        file.write(chunk)
+                        downloaded_size += len(chunk)
+                        # Optional: You can print progress here if needed
+                        if downloaded_size >= total_size:
+                            break
+
+        # Create and start a new thread for downloading the file
+        download_thread = threading.Thread(target=download, args=(url, file_path))
+        download_thread.start()
+        return file_path
+    except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+        if retry_count < 2:
+            print(f"Retrying... (Attempt {retry_count + 1})")
+            return download_file(url, file_path, retry_count + 1)
+        else:
+            print("Maximum retry attempts reached.")
+            return None
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return None
+
 
 def get_duration(file_path):
     command = [
