@@ -28,7 +28,7 @@ async def update_progress(downloaded, total, message, state="Uploading"):
         print(e)
         pass
 
-"""
+
 def download_file(url: str, filename):
     try:
         response = requests.get(url, stream=True)
@@ -44,22 +44,6 @@ def download_file(url: str, filename):
         except:
             pass
         return False
-        
-"""
-
-def download_file(url: str, filename: str) -> str:
-    try:
-        destination = f"downloads/{filename}"
-        os.makedirs(os.path.dirname(destination), exist_ok=True)
-        dl = SmartDL(url, dest=destination, progress_bar=False)
-        dl.start()
-        if dl.isSuccessful():
-            return dl.get_dest()
-        else:
-            return None
-    except Exception as e:
-        print(f"Error downloading file: {e}")
-        return None
 
 
 """
@@ -103,15 +87,13 @@ def download_thumb(url: str):
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
         filename = f"downloads/{uuid_string}.jpeg"
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        dl = SmartDL(url, dest=filename, progress_bar=False)
-        dl.start()
-        if dl.isSuccessful():
-            return dl.get_dest()
-        else:
-            return None  
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(filename, 'wb') as f:
+            f.write(response.content)
+        return filename    
     except Exception as e:
-        print(f"Error downloading image: {e}")      
+        print(f"Error downloading image: {e}")
         return None
 
 
