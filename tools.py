@@ -103,17 +103,15 @@ async def download_thumb(url: str):
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
         filename = f"downloads/{uuid_string}.jpeg"
-        response = requests.get(url)
-        response.raise_for_status()
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        return filename    
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        dl = SmartDL(url, dest=filename, progress_bar=False)
+        await asyncio.to_thread(dl.start)
+        if dl.isSuccessful():
+            return dl.get_dest()
+        else:
+            return None  
     except Exception as e:
-        print(f"Error downloading image: {e}")
-        try:
-            os.remove(filename)
-        except:
-            pass
+        print(f"Error downloading image: {e}")      
         return None
 
 
