@@ -12,3 +12,4 @@ requests
 aiohttp
 gitpython
 humanfriendly
+pysmartdl2
