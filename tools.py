@@ -5,7 +5,7 @@ import pyshorteners, humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
-from pysmartdl2 import SmartDL
+
 
 #loop = asyncio.get_event_loop()
 rapi = pyshorteners.Shortener()
