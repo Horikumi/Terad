@@ -1,7 +1,7 @@
 asyncio
 dnspython
 motor
-pyrogram
+pyrogram==2.0.106
 python-dotenv
 tgcrypto
 gunicorn
@@ -12,4 +12,3 @@ requests
 aiohttp
 gitpython
 humanfriendly
-pysmartdl2
