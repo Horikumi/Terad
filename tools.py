@@ -41,7 +41,7 @@ def download_file(url: str, filename):
         print(f"Error downloading file: {e}")
         return False
 """
-
+"""
 def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
@@ -66,9 +66,9 @@ def download_file(url, file_path, retry_count=0):
     except Exception as e:
         print(f"Error occurred: {e}")
         return None
-
-
 """
+
+
 def download_file(url: str, filename: str) -> str:
     try:
         destination = f"downloads/{filename}"
@@ -98,8 +98,8 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")      
         return None
-"""        
-
+       
+"""
 def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
@@ -114,6 +114,7 @@ def download_thumb(url: str):
         print(f"Error downloading image: {e}")
         return None
 
+"""
 
 def get_duration(file_path):
     command = [
