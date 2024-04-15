@@ -492,12 +492,9 @@ async def terabox_dm(client, message):
                          await asyncio.sleep(e.value)
                       except Exception as e:
                          print(e)                      
-                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")):
+                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 104857600:
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                                  await nil.edit_text("Completed")
-                         if int(size_bytes) > 104857600:
-                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                                  await nil.edit_text("Completed")
                          else:
                              try:
                                 vid_path = await download_file(dlink, name)
