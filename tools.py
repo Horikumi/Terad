@@ -40,8 +40,6 @@ def download_file(url: str, filename):
         print(f"Error downloading file: {e}")
         return False
 
-"""
-
 def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
@@ -81,7 +79,60 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")
         return None
+"""
 
+async def download_file(url, file_path, retry_count=0):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response.raise_for_status()  # Raise exception for non-2xx status codes
+
+                total_size = int(response.headers.get('Content-Length', 0))
+
+                with open(file_path, 'ab') as file:
+                    downloaded_size = 0
+                    file.seek(0, os.SEEK_END)
+                    async for chunk in response.content.iter_any(1024):
+                        if not chunk:
+                            break
+                        file.write(chunk)
+                        downloaded_size += len(chunk)
+
+                        if downloaded_size >= total_size:
+                            break
+
+                return file_path
+
+    except Exception as e:
+        if retry_count < 2:
+            print(f"Retrying... (Attempt {retry_count + 1})")
+            return await download_file(url, file_path, retry_count=retry_count + 1)
+        else:
+            print("Maximum retry attempts reached.")
+            return None
+    
+
+async def download_thumb(url: str):
+    try:
+        random_uuid = uuid.uuid4()
+        uuid_string = str(random_uuid)
+        filename = f"downloads/{uuid_string}.jpeg"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response.raise_for_status()  # Raise exception for non-2xx status codes
+
+                # Read the entire response content
+                content = await response.content.read()
+
+                # Write the content to the file
+                with open(filename, 'wb') as f:
+                    f.write(content)
+
+        return filename
+    except Exception as e:
+        print(f"Error downloading image: {e}")
+        return None
 
 
 
