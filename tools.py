@@ -102,6 +102,7 @@ async def download_file(url, file_path, retry_count=0):
                 return file_path
 
     except Exception as e:
+        print(e)
         if retry_count < 2:
             print(f"Retrying... (Attempt {retry_count + 1})")
             return await download_file(url, file_path, retry_count=retry_count + 1)
