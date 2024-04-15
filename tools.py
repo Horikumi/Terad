@@ -90,14 +90,12 @@ async def download_file(url, file_path, retry_count=0):
                 total_size = int(response.headers.get('Content-Length', 0))
 
                 with open(file_path, 'ab') as file:
-                    downloaded_size = 0
                     file.seek(0, os.SEEK_END)
                     async for chunk in response.content.iter_any(1024):
                         if not chunk:
                             break
                         file.write(chunk)
-                        downloaded_size += len(chunk)
-
+                        downloaded_size = file.tell()
                         if downloaded_size >= total_size:
                             break
 
