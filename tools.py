@@ -91,7 +91,7 @@ async def download_file(url, file_path, retry_count=0):
 
                 with open(file_path, 'ab') as file:
                     file.seek(0, os.SEEK_END)
-                    async for chunk in response.content.iter_any(1024):
+                    async for chunk in response.content.iter_any():
                         if not chunk:
                             break
                         file.write(chunk)
