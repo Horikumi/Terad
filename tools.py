@@ -39,8 +39,9 @@ def download_file(url: str, filename):
     except Exception as e:
         print(f"Error downloading file: {e}")
         return False
+"""
 
-def download_file(url, file_path, retry_count=0):    
+async def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -66,7 +67,7 @@ def download_file(url, file_path, retry_count=0):
         return None
 
     
-def download_thumb(url: str):
+async def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
@@ -79,8 +80,9 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")
         return None
-"""
 
+
+"""
 async def download_file(url, file_path, retry_count=0):
     try:
         async with aiohttp.ClientSession() as session:
@@ -133,7 +135,7 @@ async def download_thumb(url: str):
         print(f"Error downloading image: {e}")
         return None
 
-
+"""
 
 def get_duration(file_path):
     command = [
