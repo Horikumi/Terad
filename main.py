@@ -259,6 +259,7 @@ async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
 
+"""
 async def terabox_dm(client, message):
         urls = extract_links(message.text or message.caption)
         if not urls:
@@ -327,7 +328,7 @@ async def terabox_dm(client, message):
                  del queue_url[user_id]
 
 
-"""
+
 @app.on_message(filters.chat(-1001935231841) & filters.text)
 async def message_handler(client, message):
   text = message.text
@@ -434,6 +435,7 @@ async def terabox_group(client, message):
             if user_id in queue_url:
                  del queue_url[user_id]
 
+"""
 
 
 async def terabox_dm(client, message):
@@ -444,12 +446,14 @@ async def terabox_dm(client, message):
               return await message.reply_text("First Join @CheemsBackup to Use me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
               return await token_fun(client, message)
-        try:
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                 return await message.reply_text("Already One Url is Processing pls wait for it to Complete.")
-            queue_url[user_id] = True
-            for url in urls:                
+        try:           
+            for url in urls:
+                user_id = int(message.from_user.id)
+                if user_id in queue_url and str(url) in queue_url[user_id]:
+                        return await message.reply_text("This Url is Already In Process Wait")
+                if user_id not in queue_url:
+                     queue_url[user_id] = {}
+                queue_url[user_id][url] = True
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue
@@ -524,7 +528,6 @@ async def terabox_dm(client, message):
             if user_id in queue_url:
                  del queue_url[user_id]
               
-"""
 
 async def remove_tokens():
         while True:
