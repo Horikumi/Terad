@@ -295,7 +295,7 @@ def extract_links(message):
         url_pattern = r'https?://\S+'        
         matches = re.findall(url_pattern, message)
 
-        return matches[:1]
+        return matches
     except Exception as e:
         print(f"Error extracting links: {e}")
         return []
