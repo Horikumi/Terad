@@ -58,7 +58,7 @@ async def download_file(url, file_path, retry_count=0):
     except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
         if retry_count < 2: 
             print(f"Retrying... (Attempt {retry_count + 1})")
-            return download_file(url, file_path, retry_count + 1)
+            return await download_file(url, file_path, retry_count + 1)
         else:
             print("Maximum retry attempts reached.")
             return None
