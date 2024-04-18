@@ -446,15 +446,12 @@ async def terabox_dm(client, message):
               return await message.reply_text("First Join @CheemsBackup to Use me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
               return await token_fun(client, message)
-        try:            
+        try:
+            user_id = int(message.from_user.id)
+            if user_id in queue_url:
+                 return await message.reply_text("Already One Url is Processing pls wait for it to Complete.")
+            queue_url[user_id] = True
             for url in urls:
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        await message.reply_text("This Url is Already In Process Wait")
-                        continue
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
                     continue
@@ -494,7 +491,7 @@ async def terabox_dm(client, message):
                          await asyncio.sleep(e.value)
                       except Exception as e:
                          print(e)                      
-                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 104857600:
+                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                                  await nil.edit_text("Completed")
                          else:
