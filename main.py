@@ -259,7 +259,6 @@ async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
 
 
-"""
 async def terabox_dm(client, message):
         urls = extract_links(message.text or message.caption)
         if not urls:
@@ -328,7 +327,7 @@ async def terabox_dm(client, message):
                  del queue_url[user_id]
 
 
-
+"""
 @app.on_message(filters.chat(-1001935231841) & filters.text)
 async def message_handler(client, message):
   text = message.text
@@ -435,7 +434,6 @@ async def terabox_group(client, message):
             if user_id in queue_url:
                  del queue_url[user_id]
 
-"""
 
 
 async def terabox_dm(client, message):
@@ -526,6 +524,7 @@ async def terabox_dm(client, message):
             if user_id in queue_url:
                  del queue_url[user_id]
               
+"""
 
 async def remove_tokens():
         while True:
