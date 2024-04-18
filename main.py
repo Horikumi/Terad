@@ -450,7 +450,8 @@ async def terabox_dm(client, message):
             for url in urls:
                 user_id = int(message.from_user.id)
                 if user_id in queue_url and str(url) in queue_url[user_id]:
-                        return await message.reply_text("This Url is Already In Process Wait")
+                        await message.reply_text("This Url is Already In Process Wait")
+                        continue 
                 if user_id not in queue_url:
                      queue_url[user_id] = {}
                 queue_url[user_id][url] = True
