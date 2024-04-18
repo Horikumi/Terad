@@ -39,9 +39,8 @@ def download_file(url: str, filename):
     except Exception as e:
         print(f"Error downloading file: {e}")
         return False
-"""
 
-async def download_file(url, file_path, retry_count=0):    
+def download_file(url, file_path, retry_count=0):    
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -58,7 +57,7 @@ async def download_file(url, file_path, retry_count=0):
     except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
         if retry_count < 2: 
             print(f"Retrying... (Attempt {retry_count + 1})")
-            return await download_file(url, file_path, retry_count + 1)
+            return download_file(url, file_path, retry_count + 1)
         else:
             print("Maximum retry attempts reached.")
             return None
@@ -67,7 +66,7 @@ async def download_file(url, file_path, retry_count=0):
         return None
 
     
-async def download_thumb(url: str):
+def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
@@ -80,9 +79,8 @@ async def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")
         return None
-
-
 """
+
 async def download_file(url, file_path, retry_count=0):
     try:
         async with aiohttp.ClientSession() as session:
@@ -135,7 +133,7 @@ async def download_thumb(url: str):
         print(f"Error downloading image: {e}")
         return None
 
-"""
+
 
 def get_duration(file_path):
     command = [
