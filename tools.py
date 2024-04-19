@@ -134,7 +134,7 @@ async def download_thumb(url: str):
 
 """
 
-async def download_file(url, file_path, retry_limit=2):
+def download_file(url, file_path, retry_limit=2):
     retry_count = 0
 
     while retry_count < retry_limit:
@@ -165,7 +165,7 @@ async def download_file(url, file_path, retry_limit=2):
     print("Maximum retry attempts reached.")
     return None
 
-async def download_thumb(url: str):
+def download_thumb(url: str):
     try:
         random_uuid = uuid.uuid4()
         uuid_string = str(random_uuid)
