@@ -79,7 +79,6 @@ def download_thumb(url: str):
     except Exception as e:
         print(f"Error downloading image: {e}")
         return None
-"""
 
 async def download_file(url, file_path, retry_count=0):
     try:
@@ -133,8 +132,53 @@ async def download_thumb(url: str):
         print(f"Error downloading image: {e}")
         return None
 
+"""
 
+async def download_file(url, file_path, retry_limit=2):
+    retry_count = 0
 
+    while retry_count < retry_limit:
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            total_size = int(response.headers.get('content-length', 0))
+
+            with open(file_path, 'ab') as file:
+                file.seek(0, os.SEEK_END) 
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        file.write(chunk)
+                        downloaded_size = file.tell()
+                        if downloaded_size >= total_size:
+                            break
+
+            return file_path
+
+        except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+            retry_count += 1
+            print(f"Retrying... (Attempt {retry_count})")
+        
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            break
+
+    print("Maximum retry attempts reached.")
+    return None
+
+async def download_thumb(url: str):
+    try:
+        random_uuid = uuid.uuid4()
+        uuid_string = str(random_uuid)
+        filename = f"downloads/{uuid_string}.jpeg"
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(filename, 'wb') as f:
+            f.write(response.content)
+        return filename    
+    except Exception as e:
+        print(f"Error downloading image: {e}")
+        return None
+        
 def get_duration(file_path):
     command = [
         "ffprobe",
