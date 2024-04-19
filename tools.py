@@ -135,9 +135,7 @@ async def download_thumb(url: str):
 """
 
 def download_file(url, file_path, retry_limit=2):
-    retry_count = 0
-
-    while retry_count < retry_limit:
+    for retry_count in range(retry_limit):
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
@@ -155,8 +153,7 @@ def download_file(url, file_path, retry_limit=2):
             return file_path
 
         except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
-            retry_count += 1
-            print(f"Retrying... (Attempt {retry_count})")
+            print(f"Retrying... (Attempt {retry_count + 1})")
         
         except Exception as e:
             print(f"Error occurred: {e}")
@@ -164,6 +161,7 @@ def download_file(url, file_path, retry_limit=2):
 
     print("Maximum retry attempts reached.")
     return None
+
 
 def download_thumb(url: str):
     try:
