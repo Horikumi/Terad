@@ -499,8 +499,9 @@ async def terabox_dm(client, message):
                                  await nil.edit_text("Completed")
                          else:
                              try:
-                                vid_path = await asyncio.to_thread(download_file, dlink, name)
-                                thumb_path = await asyncio.to_thread(download_thumb, thumb)                                                                                       
+                                loop = asyncio.get_event_loop()
+                                vid_path = await loop.run_in_executor(download_file, dlink, name)
+                                thumb_path = await loop.run_in_executor(download_thumb, thumb)                                                                                       
                                 ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
                                 file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                 unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
