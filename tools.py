@@ -288,7 +288,7 @@ async def get_data(link_data):
     print(e)
     return None, None, None, None, None
 
-def extract_links(message):
+async def extract_links(message):
     # fetch all links
     try:
         url_pattern = r'https?://\S+'        
