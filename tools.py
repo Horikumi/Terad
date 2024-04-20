@@ -1,13 +1,12 @@
 import asyncio, re, random, aiohttp, uuid, os 
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import pyshorteners, humanfriendly
+import humanfriendly
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
-rapi = pyshorteners.Shortener()
 
 download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
 
@@ -282,7 +281,7 @@ async def get_data(link_data):
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-    download_link = rapi.tinyurl.short(download_link)
+    download_link = await shorten_url(download_link)
     thumb = link_data["thumbs"]["url3"]
     return file_name, file_size, link_data["size"], download_link, thumb
   except Exception as e:
@@ -351,21 +350,22 @@ async def find_between(string, start, end):
     end_index = string.find(end, start_index)
     return string[start_index:end_index]
 
+
 async def shorten_url(long_url):
-    api_key = '26LFT5xlnvMbhEwux1LCDvftvss2'
-    api_url = f"https://api.shareus.io/easy_api?key={api_key}&link={long_url}"
+    api_url = f'https://tinyurl.com/api-create.php?url={long_url}'
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url) as response:
                 if response.status == 200:
-                    data = await response.text()
-                    return data.strip()  # Remove any extra whitespace
+                    short_url = await response.text()
+                    return short_url.strip()
                 else:
-                    print(f"Failed to shorten URL. Status code: {response.status}")
+                    print(f'Failed to shorten URL. Status code: {response.status}')
                     return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f'Error occurred: {e}')
         return None
+
       
 async def extract_code(url: str):
     pattern1 = r"/s/(\w+)"
