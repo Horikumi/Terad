@@ -7,7 +7,6 @@ tgcrypto
 gunicorn
 Flask
 uvloop
-pyshorteners
 requests
 aiohttp
 gitpython
