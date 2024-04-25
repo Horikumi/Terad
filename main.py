@@ -503,7 +503,12 @@ async def terabox_dm(client, message):
                                 unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
                                 direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                                 await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                                await nil.edit_text("Completed")                              
+                                await nil.edit_text("Completed")
+                                try:
+                                  os.remove(vid_path)
+                                  os.remove(thumb_path)
+                                except:
+                                  pass
                                 await store_file(unique_id, file_id)
                                 await store_url(url, file_id, unique_id, direct_url)
                              except FloodWait as e:
