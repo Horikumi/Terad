@@ -75,6 +75,13 @@ async def get_token():
   hek = await rokendb.find_one(document)
   return hek['token']
 
+
+async def save_adrino(token):
+    chat_id = 12345
+    timer_after = datetime.now() + timedelta(minutes=720)
+    update_data = {"token": token, "timer_after": timer_after}
+    await rokendb.update_one({"chat_id": chat_id}, {"$set": update_data})
+
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
         timer_after = datetime.now() + timedelta(minutes=720)
