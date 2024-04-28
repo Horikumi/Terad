@@ -518,10 +518,11 @@ async def terabox_dm(client, message):
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
                                  await nil.edit_text("Completed")
                              finally:
-                                    if vid_path and os.path.exists(vid_path):
-                                         os.remove(vid_path)
-                                    if thumb_path and os.path.exists(thumb_path):
-                                         os.remove(thumb_path)
+                                    try:
+                                       os.remove(vid_path)
+                                       os.remove(thumb_path)
+                                    except:
+                                       pass
         except FloodWait as e:
             await asyncio.sleep(e.value)                             
         except Exception as e:
