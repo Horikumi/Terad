@@ -377,28 +377,4 @@ async def extract_code(url: str):
     if match:
         return match.group(1)
     return url
-
-
-async def adrino_url():
-    random_num = random.randint(1000, 99999)
-    dest_link = f"https://telegram.me/teradlrobot?start=token{random_num}"
-    api_url = f'https://adrinolinks.in/api?api=bd1171dd3ccb6e43fc6e31876df0871a29e9c794&url={dest_link}'
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url) as response:
-                if response.status == 200:
-                    data = await response.json()               
-                    if 'shortenedUrl' in data:
-                        shortened_url = data['shortenedUrl']                        
-                        return shortened_url
-                    else:
-                        print("Shortened URL not found in the response")
-                        return None
-                else:
-                    print(f"Request failed with status code: {response.status}")
-                    return None
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return None
-
-  
+      
