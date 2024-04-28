@@ -13,7 +13,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
+from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, adrino_url
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -83,8 +83,7 @@ async def save_adrino():
     update_data = {"token": token, "timer_after": timer_after}
     await rokendb.update_one({"chat_id": chat_id}, {"$set": update_data}, upsert=True)
 
-async def delete_adrino():
-      chat_id = 12345
+async def delete_adrino(chat_id):
       await rokendb.delete_one({"chat_id": chat_id})
       await save_adrino()
 
