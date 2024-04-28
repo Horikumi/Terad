@@ -76,11 +76,17 @@ async def get_token():
   return hek['token']
 
 
-async def save_adrino(token):
+async def save_adrino():
     chat_id = 12345
+    token = await adrino_url()
     timer_after = datetime.now() + timedelta(minutes=720)
     update_data = {"token": token, "timer_after": timer_after}
-    await rokendb.update_one({"chat_id": chat_id}, {"$set": update_data})
+    await rokendb.update_one({"chat_id": chat_id}, {"$set": update_data}, upsert=True)
+
+async def delete_adrino():
+      chat_id = 12345
+      await rokendb.delete_one({"chat_id": chat_id})
+      await save_adrino()
 
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
@@ -556,9 +562,27 @@ async def remove_tokens():
             print(f"Error in delete_videos loop: {e}")
 
 
+async def remove_adrino():
+        while True:
+          try:
+            await asyncio.sleep(10)
+            current_time = datetime.now()
+            filter_query = {"timer_after": {"$lt": current_time}}
+            deleted_documents = await rokendb.find(filter_query).to_list(None)
+            for document in deleted_documents:
+                chat_id = document.get("chat_id")           
+                try:
+                    await delete_adrino(chat_id)                  
+                except Exception as e:
+                    print(e)
+          except Exception as e:
+            print(f"Error in delete_videos loop: {e}")
+            
+
 async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
+    asyncio.create_task(remove_adrino())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
