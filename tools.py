@@ -262,6 +262,9 @@ async def get_direct_link(url):
         async with my_session.head(url) as response:
             response.raise_for_status()
             direct_link = response.headers.get('Location')
+            if direct_link.startswith("https://data.terabox.app"):
+               download_link = "https://d3.terabox.app" + direct_link[direct_link.index("/", 8):]
+               return download_link
             return direct_link
     except Exception as e:
         print(f"Error fetching direct link: {e}")
