@@ -2,6 +2,7 @@ import asyncio, re, random, aiohttp, uuid, os
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import humanfriendly
+from asyncio.subprocess import PIPE, create_subprocess_exec
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
@@ -133,7 +134,34 @@ async def download_thumb(url: str):
         return None
 
 
+async def get_duration(file_path):
+    command = [
+        "ffprobe",
+        "-loglevel",
+        "quiet",
+        "-print_format",
+        "json",
+        "-show_format",
+        "-show_streams",
+        file_path,
+    ]
+    process = await create_subprocess_exec(*command, stdout=PIPE, stderr=PIPE)
+    stdout, _ = await process.communicate()
+    try:
+        # Decode JSON from the stdout asynchronously
+        result = json.loads(stdout)
+        if "format" in result and "duration" in result["format"]:
+            return float(result["format"]["duration"])
+        if "streams" in result:
+            for s in result["streams"]:
+                if "duration" in s:
+                    return float(s["duration"])
+    except Exception as e:
+        print(e)
+        return None
+      
 
+"""
 def get_duration(file_path):
     command = [
         "ffprobe",
@@ -161,7 +189,7 @@ def get_duration(file_path):
                 return float(s["duration"])
 
     return None
-
+"""
 
 async def create_session():
     headers = {
