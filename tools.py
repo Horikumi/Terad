@@ -165,21 +165,21 @@ def get_duration(file_path):
 
 async def create_session():
     headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
-    'Cookie': 'browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __bid_n=18e8bfdfc3be4ea4224207; lang=en; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __stripe_sid=0f3f9db5-e81b-41d2-963c-833ce8e3366e91a52e; csrfToken=z5bfS3bVkBgvXhiFBXt9ID6K; __stripe_sid=0f3f9db5-e81b-41d2-963c-833ce8e3366e91a52e; ndus=YVTF-CCteHuiDT86ONlzNTrPuklAD6phdbNQwB4_; ab_ymg_result={"data":"51efd8e827622b901b5291710e3f479af93425d3a89d6f8793c27d26b13659ff548d08cfb4ddf15e132832d8ad92461b3874c271a817a2320ff28d409317ef5b7abec2c76d4a90de79e1a35acfbf432cea392aab8dd9f655002e0ce355836ca541f36f286de3f80d9e002e731c2496487e29c6935e4a6ec3265977b207772d5a","key_id":"66","sign":"73888851"}; ndut_fmt=B63276224850B3203FEB8B219CE087AF04EEE315BAC1405E1BC8C8990F411870; ab_sr=1.0.1_MjJmODIwMDI2NTNlMjNmNmVjZmY5MWQzMjIzMDY2NjYzMDc5NDZiOWZhNTJlMzlkYThlOGZhZmVkOTFmMjljYjlhNWE5Mjc1NmY4YzA0MDkwZDkzZTE3NzQ5OWRlMDZiYWUwMTM1NGRjYjJmODZkOWNlYzhiZmM2NWMxMGIyZjZjZmY5ZDJlNTM2ZTE5NjI4MTE4ODg4YzM0NGIwOTZkZA==; _ga_06ZNKL8C2E=GS1.1.1714877889.4.1.1714878493.57.0.0',
-    'Referer': 'https://www.terabox.app/',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-User': '?1',
-    'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
+     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+     'Accept-Language': 'en-US,en;q=0.9',
+     'Cache-Control': 'max-age=0',
+     'Connection': 'keep-alive',
+     'Cookie': 'browserid=khXCS03TzvdACGfWjfD-9fdJBWCd83okmrk0apGAEPjCXVWWeTWXwdqk0fU=; _ga=GA1.1.1811415982.1710434419; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __bid_n=18e8bfdfc3be4ea4224207; lang=en; __stripe_mid=759ba489-0c3b-40da-a098-dd7ab307d05c9f299d; __stripe_sid=0f3f9db5-e81b-41d2-963c-833ce8e3366e91a52e; csrfToken=z5bfS3bVkBgvXhiFBXt9ID6K; __stripe_sid=0f3f9db5-e81b-41d2-963c-833ce8e3366e91a52e; ndus=Y48muKyteHuirgbq7gqV9Bsq2DY7xDDyIbruqJ0p; ndut_fmt=BF36B59B48CD9FE5B1A99D7D3BAB42E8FD009A60FFB8B56F3746D89BF2C307E9; ab_sr=1.0.1_ZDRiMzc3NzM5YjZhNmM5YWI5MzNkMDBhYjU4OGI4ZGQxNzg3ZjlhODM4MjA0MjQzMmI3MzVlMDYzMTk3ZjU3MjZmM2JlNjljNWRmZjVjOTJlZWRiMDA1YTBmZjk5NzljNTUxODQyYjcwMGMwMzc4Yjg1ODQ5NmUzNTU0OWY4YjY3ZWQ2ZjAxNmU5OGZhMTIzYzg4MWNlNzI1MDJhYjg2YQ==; ab_ymg_result={"data":"51efd8e827622b901b5291710e3f479af93425d3a89d6f8793c27d26b13659ff548d08cfb4ddf15e132832d8ad92461b3874c271a817a2320ff28d409317ef5b7abec2c76d4a90de79e1a35acfbf432cbbfad79a608e77256d66ac4f81591cfe942d32248d6c7c324ddfc92d77396e208c4b136dd6df80a917a1fd0b37099ce6","key_id":"66","sign":"1617db7c"}; _ga_06ZNKL8C2E=GS1.1.1714877889.4.1.1714879329.28.0.0',
+     'Referer': 'https://www.terabox.app/',
+     'Sec-Fetch-Dest': 'document',
+     'Sec-Fetch-Mode': 'navigate',
+     'Sec-Fetch-Site': 'same-origin',
+     'Sec-Fetch-User': '?1',
+     'Upgrade-Insecure-Requests': '1',
+     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+     'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+     'sec-ch-ua-mobile': '?0',
+     'sec-ch-ua-platform': '"Windows"',
     }
     my_session = aiohttp.ClientSession(headers=headers) 
     return my_session
