@@ -11,3 +11,4 @@ requests
 aiohttp
 gitpython
 humanfriendly
+py_spoo_url
