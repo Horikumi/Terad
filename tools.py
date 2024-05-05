@@ -2,11 +2,13 @@ import asyncio, re, random, aiohttp, uuid, os
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import humanfriendly
+from py_spoo_url import Shortener
 import pyrogram, asyncio, os, uvloop, uuid, random, subprocess, requests
 import re, json, aiohttp, random
 from io import BytesIO
 
 #loop = asyncio.get_event_loop()
+shortener = Shortener()
 
 download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
 
@@ -262,10 +264,8 @@ async def get_direct_link(url):
         async with my_session.head(url) as response:
             response.raise_for_status()
             direct_link = response.headers.get('Location')
-            if direct_link.startswith("https://data.terabox.app"):
-               download_link = "https://d3.terabox.app" + direct_link[direct_link.index("/", 8):]
-               return download_link
-            return direct_link
+            download_link = "https://d3.terabox.app" + direct_link[direct_link.index("/", 8):]
+            return download_link
     except Exception as e:
         print(f"Error fetching direct link: {e}")
         return None
@@ -284,7 +284,7 @@ async def get_data(link_data):
         if not download_link:
            url = random.choice(download_urls)
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-    download_link = await shorten_url(download_link)
+    download_link = shortener.shorten(download_link)
     thumb = link_data["thumbs"]["url3"]
     return file_name, file_size, link_data["size"], download_link, thumb
   except Exception as e:
