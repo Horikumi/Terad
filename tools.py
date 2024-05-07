@@ -353,7 +353,7 @@ async def find_between(string, start, end):
 
 
 async def shorten_url(long_url):
-    api_url = f'https://clck.ru/--?url={long_url}'
+    api_url = f'https://tinyurl.com/api-create.php?url={long_url}'
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(api_url) as response:
