@@ -515,7 +515,7 @@ async def terabox_dm(client, message):
                                 await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)                                                           
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})")
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
