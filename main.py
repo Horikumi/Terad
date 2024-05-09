@@ -516,8 +516,8 @@ async def terabox_dm(client, message):
                                 await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)
-                                 rtn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=f"https://terabox-http.vercel.app/stream.m3u8?url={url}"))
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", reply_markup=InlineKeyboardMarkup([[rtn]]))
+                                 ftn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=f"https://terabox-http.vercel.app/stream.m3u8?url={url}"))
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", reply_markup=InlineKeyboardMarkup([[ftn]]))
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
