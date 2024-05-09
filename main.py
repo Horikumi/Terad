@@ -5,7 +5,7 @@ import pyrogram, uvloop
 from pyrogram import __version__ as pyrover
 from pyrogram import filters, idle
 from pyrogram.errors import FloodWait
-from pyrogram.types import Message
+from pyrogram.types import Message, WebAppInfo
 from datetime import datetime, timedelta
 import pyrogram, asyncio, os, uvloop, time
 from pyrogram import Client, filters, idle, enums
@@ -492,7 +492,8 @@ async def terabox_dm(client, message):
                       except Exception as e:
                          print(e)                      
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 rtn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=f"https://terabox-http.vercel.app/stream.m3u8?url={url}"))
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", reply_markup=InlineKeyboardMarkup([[rtn]]))
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -514,8 +515,9 @@ async def terabox_dm(client, message):
                              except FloodWait as e:
                                 await asyncio.sleep(e.value)
                              except Exception as e:
-                                 print(e)                                                           
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 print(e)
+                                 rtn = InlineKeyboardButton("Watch", web_app=WebAppInfo(url=f"https://terabox-http.vercel.app/stream.m3u8?url={url}"))
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})", reply_markup=InlineKeyboardMarkup([[rtn]]))
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
