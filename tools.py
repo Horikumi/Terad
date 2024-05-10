@@ -287,7 +287,7 @@ async def get_data(link_data):
     return file_name, file_size, link_data["size"], download_link, link_data["dlink"], thumb
   except Exception as e:
     print(e)
-    return None, None, None, None, None
+    return None, None, None, None, None, None
 
 async def extract_links(message):
     # fetch all links
