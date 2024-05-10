@@ -476,7 +476,7 @@ async def terabox_dm(client, message):
                    await message.reply_text("Some Error Occurred", quote=True)
                    continue 
                 for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
+                    name, size, size_bytes, dlink, dlink2, thumb  = await get_data(link)
                     if dlink:
                       try:                        
                          ril = await client.send_video(-1002069870125, dlink, caption="Indian")
@@ -492,7 +492,7 @@ async def terabox_dm(client, message):
                       except Exception as e:
                          print(e)                      
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -515,7 +515,7 @@ async def terabox_dm(client, message):
                                 await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)                                                           
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: [Link]({dlink})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
