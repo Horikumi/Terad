@@ -266,7 +266,7 @@ async def get_direct_link(url):
             return direct_link, download_link
     except Exception as e:
         print(f"Error fetching direct link: {e}")
-        return None
+        return None, None
     finally:
         await my_session.close()
       
@@ -284,10 +284,10 @@ async def get_data(link_data):
            download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
   #  download_link = await shorten_url(download_link)
     thumb = link_data["thumbs"]["url3"]
-    return file_name, file_size, link_data["size"], direct_link, download_link, link_data["dlink"], thumb
+    return file_name, file_size, link_data["size"], download_link, link_data["dlink"], direct_link, thumb
   except Exception as e:
     print(e)
-    return None, None, None, None, None, None
+    return None, None, None, None, None, None, None
 
 async def extract_links(message):
     # fetch all links
