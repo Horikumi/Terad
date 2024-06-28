@@ -544,6 +544,8 @@ async def remove_tokens():
                 try:
                     await delete_token(chat_id)
                     await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
                 except Exception as e:
                     print(e)
           except Exception as e:
