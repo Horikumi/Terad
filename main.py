@@ -174,7 +174,7 @@ async def start_func(client, message):
              if file_id:
                  hel = await client.send_cached_media(message.chat.id, file_id)
                  return await add_served_user(message.chat.id)
-    elif len(message.command) > 1 and "token" in message.command[1]:
+    elif len(message.command) > 1 and "key" in message.command[1]:
             # token = message.command[1].replace("token", "")
              await message.reply_text("🎉 Token Activated 🎉")
              return await save_token(message.from_user.id)
