@@ -326,7 +326,7 @@ async def check_url_patterns_async(url):
         r"www\.4funbox\.com",
         r"mirrobox\.com",
         r"nephobox\.com",
-        r"terabox",
+        r"tera",
         r"terabox\.app",
         r"terabox\.com",
         r"www\.terabox\.ap",
