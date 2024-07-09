@@ -174,7 +174,7 @@ async def start_func(client, message):
              if file_id:
                  hel = await client.send_cached_media(message.chat.id, file_id)
                  return await add_served_user(message.chat.id)
-    elif len(message.command) > 1 and "key" in message.command[1]:
+    elif len(message.command) > 1 and "token" in message.command[1]:
             # token = message.command[1].replace("token", "")
              await message.reply_text("🎉 Token Activated 🎉")
              return await save_token(message.from_user.id)
@@ -492,7 +492,7 @@ async def terabox_dm(client, message):
                       except Exception as e:
                          print(e)                      
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelping/3)")
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -515,7 +515,7 @@ async def terabox_dm(client, message):
                                 await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)                                                           
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelper/2)")
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelping/3)")
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
