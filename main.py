@@ -29,7 +29,7 @@ rokendb = db.roken
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
-BOT_TOKEN = "7121574962:AAEHV4v7311CkBCyEGgMUKanC7mzrzgMpaA"
+BOT_TOKEN = "7121574962:AAHydrtwVCBvgPFwI1Fzm8w8lZ-wzTzeT68"
 
 queue_url = {}
 
