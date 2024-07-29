@@ -580,13 +580,6 @@ async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
-    chat_id = 12345
-    token = await shorten_url()
-    timer_after = datetime.now() + timedelta(minutes=1)
-    await rokendb.update_one(
-        {"chat_id": chat_id}, 
-        {"$set": {"token": token, "timer_after": timer_after}}
-    )
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
