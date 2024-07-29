@@ -76,7 +76,7 @@ async def save_link():
     await rokendb.update_one(
         {"chat_id": chat_id}, 
         {"$set": {"token": token, "timer_after": timer_after}}
-)
+    )
   
 async def get_token():
   chat_id = 12345
@@ -195,7 +195,7 @@ async def token_fun(client, message):
         token = await get_token()
         keyboard = InlineKeyboardMarkup([
                  [InlineKeyboardButton("Refresh Token", url=token)],
-                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
+                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/PublicEarnTut/2")]
         ])
         return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 12 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 12 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
 
@@ -580,6 +580,13 @@ async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
+    chat_id = 12345
+    token = await shorten_url()
+    timer_after = datetime.now() + timedelta(minutes=1)
+    await rokendb.update_one(
+        {"chat_id": chat_id}, 
+        {"$set": {"token": token, "timer_after": timer_after}}
+    )
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
