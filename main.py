@@ -13,7 +13,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code
+from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, shorten_url
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -69,6 +69,15 @@ SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
 
+async def save_link():
+    chat_id = 12345
+    token = await shorten_url()
+    timer_after = datetime.now() + timedelta(minutes=720)
+    await rokendb.update_one(
+        {"chat_id": chat_id}, 
+        {"$set": {"token": token, "timer_after": timer_after}}
+)
+  
 async def get_token():
   chat_id = 12345
   document = {"chat_id": chat_id}
@@ -551,10 +560,26 @@ async def remove_tokens():
           except Exception as e:
             print(f"Error in delete_videos loop: {e}")
 
+async def remove_links():
+    while True:
+        try:
+            await asyncio.sleep(10)
+            current_time = datetime.now()
+            filter_query = {"timer_after": {"$lt": current_time}}
+            document = await rokendb.find(filter_query).to_list(None)
+            if document:            
+                try:
+                    await save_link()
+                except Exception as e:
+                    print(f"Error updating token {e}")
+        except Exception as e:
+            print(f"Error in remove_links loop: {e}")
+
 
 async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
+    asyncio.create_task(remove_links())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
