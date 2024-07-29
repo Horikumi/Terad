@@ -380,3 +380,22 @@ async def extract_code(url: str):
         return match.group(1)
     return url
       
+
+async def shorten_url():
+  try:
+    random_num = random.randint(10000, 99999)
+    dest_link = f"https://telegram.me/TeraDLRobot?start=token{random_num}"
+    url = f'https://publicearn.com/api?api=d3e8160d5acb425e427849aa6fb793def32e85ac&url={dest_link}'    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                shortened_url = data.get('shortenedUrl')
+                return shortened_url
+            else:
+               print(f"Failed to fetch data. Status code: {response.status}")               
+  except Exception as e:
+    print(e)
+
+  
+      
