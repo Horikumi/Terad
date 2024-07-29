@@ -353,34 +353,6 @@ async def find_between(string, start, end):
     return string[start_index:end_index]
 
 
-async def shorten_url(long_url):
-    api_url = f'https://clck.ru/--?url={long_url}'
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url) as response:
-                if response.status == 200:
-                    short_url = await response.text()
-                    return short_url.strip()
-                else:
-                    print(f'Failed to shorten URL. Status code: {response.status}')
-                    return None
-    except Exception as e:
-        print(f'Error occurred: {e}')
-        return None
-
-      
-async def extract_code(url: str):
-    pattern1 = r"/s/(\w+)"
-    pattern2 = r"surl=(\w+)"
-    match = re.search(pattern1, url)
-    if match:
-        return match.group(1)
-    match = re.search(pattern2, url)
-    if match:
-        return match.group(1)
-    return url
-      
-
 async def shorten_url():
   try:
     random_num = random.randint(10000, 99999)
@@ -397,5 +369,15 @@ async def shorten_url():
   except Exception as e:
     print(e)
 
-  
+      
+async def extract_code(url: str):
+    pattern1 = r"/s/(\w+)"
+    pattern2 = r"surl=(\w+)"
+    match = re.search(pattern1, url)
+    if match:
+        return match.group(1)
+    match = re.search(pattern2, url)
+    if match:
+        return match.group(1)
+    return url
       
