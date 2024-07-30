@@ -9,11 +9,11 @@ from pyrogram.types import Message
 from datetime import datetime, timedelta
 import pyrogram, asyncio, os, uvloop, time
 from pyrogram import Client, filters, idle, enums
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, shorten_url
+from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, shorten_url, extract_video_id
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -501,7 +501,10 @@ async def terabox_dm(client, message):
                       except Exception as e:
                          print(e)                      
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelping/3)")
+                                 play_url = await extract_video_id(url)
+                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
+                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -523,8 +526,11 @@ async def terabox_dm(client, message):
                              except FloodWait as e:
                                 await asyncio.sleep(e.value)
                              except Exception as e:
-                                 print(e)                                                           
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})\n**How To Watch Video**: [Here](https://t.me/TeraBoxHelping/3)")
+                                 print(e)
+                                 play_url = await extract_video_id(url)
+                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
+                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
