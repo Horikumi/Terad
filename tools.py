@@ -380,4 +380,15 @@ async def extract_code(url: str):
     if match:
         return match.group(1)
     return url
-      
+
+
+async def extract_video_id(url):
+    if isinstance(url, str):
+        match = re.search(r'/s/([^\?/#&]+)', url)
+        if match:
+            return match.group(1)
+        else:
+            raise ValueError("URL does not contain a valid video ID")
+    else:
+        raise ValueError("Input must be a string")
+
