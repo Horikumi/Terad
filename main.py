@@ -68,11 +68,13 @@ START_TIME = time.time()
 SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
+shorten = {}
 
 async def save_link():
     chat_id = 12345
     token = await shorten_url()
     timer_after = datetime.now() + timedelta(minutes=720)
+    shorten[chat_id] = token
     await rokendb.update_one(
         {"chat_id": chat_id}, 
         {"$set": {"token": token, "timer_after": timer_after}}
@@ -80,9 +82,12 @@ async def save_link():
   
 async def get_token():
   chat_id = 12345
-  document = {"chat_id": chat_id}
-  hek = await rokendb.find_one(document)
-  return hek['token']
+  token = shorten.get(chat_id)
+  if not token:
+      document = {"chat_id": chat_id}
+      hek = await rokendb.find_one(document)
+      return hek['token']
+  return token
 
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
