@@ -126,15 +126,9 @@ async def get_served_users() -> list:
 async def store_url(url, file_id, unique_id, direct_link):
     try:
         url = await extract_code(url)
-        document = await urldb.find_one({"url": url})
-        if document and unique_id not in document.get("unique_ids", []):
-            await urldb.update_one(
-                {"url": url},
-                {"$addToSet": {"file_ids": file_id, "unique_ids": unique_id, "direct_links": direct_link}},
-                upsert=True
-            )
-        elif not document:
-            await urldb.insert_one({"url": url, "file_ids": [file_id], "unique_ids": [unique_id], "direct_links": [direct_link]})
+        document = await urldb.find_one({"url": url})        
+        if not document:
+            await urldb.insert_one({"url": url, "file_id": file_id, "unique_id": unique_id, "direct_link": direct_link})
     except Exception as e:
         print(f"Error storing URL, file ID, unique ID, and direct link: {e}")
 
@@ -144,8 +138,8 @@ async def get_file_id(url):
         url = await extract_code(url)
         document = await urldb.find_one({"url": url})
         if document:
-            file_id = document.get("file_ids", [])
-            direct_link = document.get("direct_links", [])            
+            file_id = document.get("file_id")
+            direct_link = document.get("direct_link")            
             return file_id, direct_link
         else:
             return None
