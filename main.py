@@ -13,7 +13,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
-from tools import get_data, fetch_download_link_async, extract_links, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, shorten_url, extract_video_id
+from tools import get_data, fetch_download_link_async, extract_link, check_url_patterns_async, download_file, download_thumb, get_duration, update_progress, extract_code, shorten_url, extract_video_id
 from pyrogram.errors import FloodWait, UserNotParticipant, WebpageCurlFailed, MediaEmpty
 uvloop.install()
 import motor.motor_asyncio
@@ -139,15 +139,14 @@ async def store_url(url, file_id, unique_id, direct_link):
         print(f"Error storing URL, file ID, unique ID, and direct link: {e}")
 
 
-async def get_file_ids(url):
+async def get_file_id(url):
     try:
         url = await extract_code(url)
         document = await urldb.find_one({"url": url})
         if document:
-            file_ids = document.get("file_ids", [])
-            direct_links = document.get("direct_links", [])
-            file_id_direct_link_pairs = [(file_id, direct_link) for file_id, direct_link in zip(file_ids, direct_links)]
-            return file_id_direct_link_pairs
+            file_id = document.get("file_ids", [])
+            direct_link = document.get("direct_links", [])            
+            return file_id, direct_link
         else:
             return None
     except Exception as e:
@@ -448,45 +447,38 @@ async def terabox_group(client, message):
 
 
 async def terabox_dm(client, message):
-        urls = await extract_links(message.text or message.caption)
-        if not urls:
+        url = await extract_link(message.text or message.caption)
+        if not url:
           return await message.reply_text("No Urls Found")
         if not await is_join(message.from_user.id):
               return await message.reply_text("First Join @CheemsBackup to Use me")
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
               return await token_fun(client, message)
         try: 
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                  return await message.reply_text("Your One Url is Already In Process pls Wait for it to Complete")                        
-            queue_url[user_id] = True
-            for url in urls:                
-                if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue
-                files = await get_file_ids(url)
-                if files:
-                   for file, link in files:
-                       try:
-                           await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                       except FloodWait as e:
+             user_id = int(message.from_user.id)
+             if user_id in queue_url:
+                   return await message.reply_text("Your One Url is Already In Process pls Wait for it to Complete")                        
+             queue_url[user_id] = True                            
+             if not await check_url_patterns_async(str(url)):
+                    return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                    
+             file, link = await get_file_id(url)
+             if file:                
+                     try:
+                         await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                     except FloodWait as e:
                            await asyncio.sleep(e.value)
-                       except Exception as e:
-                           continue
-                   continue
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
-                except Exception as e:
+                     except Exception as e:
+                           return                
+             nil = await message.reply_text("🔎 Processing URL...", quote=True)
+             try:
+                 link_data = await fetch_download_link_async(url)
+                 if link_data is None:
+                      return await message.reply_text("No download link available for this URL", quote=True)                       
+             except Exception as e:
                    print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, dlink2, dlink3, thumb  = await get_data(link)
-                    if dlink:
+                   return await message.reply_text("Some Error Occurred", quote=True)                    
+             name, size, size_bytes, dlink, dlink2, dlink3, thumb  = await get_data(link_data[0])
+             if dlink:
                       try:                        
                          ril = await client.send_video(-1002069870125, dlink, caption="Indian")
                          file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
