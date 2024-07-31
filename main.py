@@ -455,15 +455,15 @@ async def terabox_dm(client, message):
              queue_url[user_id] = True                            
              if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                    
-             file, link = await get_file_id(url)
-             if file:                
-                     try:
-                         await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                     except FloodWait as e:
-                           await asyncio.sleep(e.value)
-                     except Exception as e:
-                           print(e)
-                           return                
+         #    file, link = await get_file_id(url)
+         #    if file:                
+         #            try:
+         #                await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+         #            except FloodWait as e:
+         #                  await asyncio.sleep(e.value)
+         #            except Exception as e:
+         #                  print(e)
+         #                  return                
              nil = await message.reply_text("🔎 Processing URL...", quote=True)
              try:
                  link_data = await fetch_download_link_async(url)
