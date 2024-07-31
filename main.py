@@ -99,7 +99,18 @@ async def save_token(chat_id):
         timer_after = datetime.now() + timedelta(minutes=720)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
-        
+
+async def initialize_token_cache():
+    try:
+        cursor = tokendb.find({})
+        async for document in cursor:
+            chat_id = document.get("chat_id")
+            if chat_id:
+                verify.add(chat_id)
+        print("Token cache initialized with data from tokendb.")
+    except Exception as e:
+        print(f"Error initializing token cache: {e}")
+
 async def is_token(chat_id):
     if chat_id in verify:
         return True    
@@ -462,8 +473,10 @@ async def remove_links():
 
 async def init():
     await app.start()
+    await initialize_token_cache()
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
+  
     asyncio.create_task(initialize_url_cache())
     asyncio.create_task(initialize_file_cache())
     print("[LOG] - Yukki Chat Bot Started")
