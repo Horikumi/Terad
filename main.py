@@ -462,10 +462,12 @@ async def terabox_dm(client, message):
                      except FloodWait as e:
                            await asyncio.sleep(e.value)
                      except Exception as e:
+                           print(e)
                            return                
              nil = await message.reply_text("🔎 Processing URL...", quote=True)
              try:
                  link_data = await fetch_download_link_async(url)
+                 print(link_data)
                  if link_data is None:
                       return await message.reply_text("No download link available for this URL", quote=True)                       
              except Exception as e:
