@@ -473,7 +473,7 @@ async def remove_links():
 
 async def init():
     await app.start()
-    await initialize_token_cache()
+    asyncio.create_task(initialize_token_cache())
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
   
