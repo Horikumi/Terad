@@ -294,8 +294,10 @@ async def extract_link(message):
     try:
         url_pattern = r'https?://\S+'        
         matches = re.findall(url_pattern, message)
-
-        return matches[0]
+        if matches:
+            return matches[0]
+        else:
+            return None
     except Exception as e:
         print(f"Error extracting links: {e}")
         return None
