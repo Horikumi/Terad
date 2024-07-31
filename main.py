@@ -70,6 +70,8 @@ ADMIN_USERS = config.ADMIN_USER
 save = {}
 shorten = {}
 verify = set()
+url_cache = {}
+file_dict = {}
 
 async def save_link():
     chat_id = 12345
@@ -111,22 +113,43 @@ async def delete_token(chat_id):
       verify.discard(chat_id)
       await tokendb.delete_one({"chat_id": chat_id})         
 
-
 async def remove_file(unique_id):
     await file_collection.delete_one({'unique_id': unique_id})
+    file_dict.pop(unique_id, None)  # Remove from file_dict
 
 async def get_file(unique_id):
-    file = await file_collection.find_one({'unique_id': unique_id})
+    file = file_dict.get(unique_id)
     if file:
         return file.get('file_id')
     else:
-        return None
+        file = await file_collection.find_one({'unique_id': unique_id})
+        if file:
+            file_dict[unique_id] = file  # Store in file_dict
+            return file.get('file_id')
+        else:
+            return None
+
+async def initialize_file_cache():
+    try:
+        cursor = file_collection.find({})
+        async for document in cursor:
+            unique_id = document.get("unique_id")
+            if unique_id:
+                file_dict[unique_id] = {
+                    'file_id': document.get("file_id")
+                }
+        print("File cache initialized with data from file_collection.")
+    except Exception as e:
+        print(f"Error initializing file cache: {e}")
+
 
 async def store_file(unique_id, file_id):
     file = await file_collection.find_one({'unique_id': unique_id})
     if file:
-      return
+        return
     await file_collection.insert_one({'unique_id': unique_id, 'file_id': file_id})
+    file_dict[unique_id] = {'file_id': file_id}  # Store in file_dict
+
   
 async def add_served_user(user_id: int):
         is_served = await usersdb.find_one({"user_id": user_id})
@@ -140,29 +163,59 @@ async def get_served_users() -> list:
             users_list.append(user)
         return users_list
 
+
 async def store_url(url, file_id, unique_id, direct_link):
     try:
         url = await extract_code(url)
         document = await urldb.find_one({"url": url})        
         if not document:
-            await urldb.insert_one({"url": url, "file_id": file_id, "unique_id": unique_id, "direct_link": direct_link})
+            await urldb.insert_one({"url": url, "file_id": file_id, "unique_id": unique_id, "direct_link": direct_link})            
+            url_cache[url] = {
+                'file_id': file_id,
+                'unique_id': unique_id,
+                'direct_link': direct_link
+            }
     except Exception as e:
         print(f"Error storing URL, file ID, unique ID, and direct link: {e}")
+
+async def initialize_url_cache():
+     try:
+        await asyncio.sleep(10)
+        cursor = urldb.find({})
+        async for document in cursor:
+            url = document.get("url")
+            if url:
+                url_cache[url] = {
+                    'file_id': document.get("file_id"),
+                    'unique_id': document.get("unique_id"),
+                    'direct_link': document.get("direct_link")
+                }
+        print("URL cache initialized with data from urldb.")
+     except Exception as e:
+        print(f"Error initializing URL cache: {e}")
 
 
 async def get_file_id(url):
     try:
-        url = await extract_code(url)
+        url = await extract_code(url)        
+        if url in url_cache:
+            cached_data = url_cache[url]
+            return cached_data['file_id'], cached_data['direct_link']        
         document = await urldb.find_one({"url": url})
         if document:
             file_id = document.get("file_id")
-            direct_link = document.get("direct_link")            
+            direct_link = document.get("direct_link")                        
+            url_cache[url] = {
+                'file_id': file_id,
+                'direct_link': direct_link
+            }          
             return file_id, direct_link
         else:
             return None, None
     except Exception as e:
         print(f"Error retrieving file IDs and direct links for URL: {e}")
         return None, None
+
 
 joined = set()
 
@@ -276,185 +329,6 @@ box_filter = filters.create(box_fil)
 @app.on_message(box_filter)
 async def tera_private(client, message):
         asyncio.create_task(terabox_dm(client, message))
-
-
-"""
-async def terabox_dm(client, message):
-        urls = extract_links(message.text or message.caption)
-        if not urls:
-          return await message.reply_text("No Urls Found")
-        if not await is_join(message.from_user.id):
-              return await message.reply_text("First Join @CheemsBackup to Use me")
-        if not await tokendb.find_one({"chat_id": message.from_user.id}):
-              return await token_fun(client, message)
-        try:
-            for url in urls:
-                if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue
-                files = await get_file_ids(url)
-                if files:
-                   for file, link in files:
-                       try:
-                           await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-                       except FloodWait as e:
-                           await asyncio.sleep(e.value)
-                       except Exception as e:
-                           continue
-                   continue
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        await message.reply_text("This Url is Already In Process Wait")
-                        continue 
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
-                except Exception as e:
-                   print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
-                      try:                        
-                         ril = await client.send_video(-1002069870125, dlink, caption="Indian")
-                         file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                         unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                         await nil.edit_text("Completed")
-                         await store_file(unique_id, file_id)
-                         await store_url(url, file_id, unique_id, direct_url)
-                      except FloodWait as e:
-                           await asyncio.sleep(e.value)
-                      except Exception as e:
-                         print(e)
-                         await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                         await nil.edit_text("Completed")
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-        except Exception as e:
-            print(e)
-            await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                 del queue_url[user_id]
-
-
-
-@app.on_message(filters.chat(-1001935231841) & filters.text)
-async def message_handler(client, message):
-  text = message.text
-  if "tera" in text or "box" in text:
-       asyncio.create_task(terabox_group(client, message))
-  else:
-    return await message.reply_text("Send Only Terabox Urls", quote=True)
-
-
-async def terabox_group(client, message):
-        urls = extract_links(message.text)
-        if not urls:
-          return await message.reply_text("No Urls Found")
-        if not await is_join(message.from_user.id):
-              return await message.reply_text("First Join @CheemsBackup to Use me")
-    
-        if not await tokendb.find_one({"chat_id": message.from_user.id}):
-              return await token_fun(client, message)
-        try:
-           await client.send_message(message.from_user.id, ".")
-        except:
-           button = InlineKeyboardButton("Click Here", url="https://t.me/teradlrobot?start=True")
-           keyboard = InlineKeyboardMarkup([[button]])
-           return await message.reply_text("First start me in private", quote=True, reply_markup=keyboard)
-        try:
-            for url in urls:
-                if not await check_url_patterns_async(str(url)):
-                    await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
-                    continue         
-                files = await get_file_ids(url)
-                if files:
-                   for file, link in files:
-                       try:
-                           await client.send_cached_media(message.from_user.id, file, caption=f"**Direct File Link**: {link}")
-                       except FloodWait as e:
-                           await asyncio.sleep(e.value)
-                       except Exception as e:
-                           continue
-                   continue
-                user_id = int(message.from_user.id)
-                if user_id in queue_url and str(url) in queue_url[user_id]:
-                        return await message.reply_text("This Url is Already In Process Wait")
-                if user_id not in queue_url:
-                     queue_url[user_id] = {}
-                queue_url[user_id][url] = True
-                nil = await message.reply_text("🔎 Processing URL...", quote=True)
-                try:
-                   link_data = await fetch_download_link_async(url)
-                   if link_data is None:
-                       await message.reply_text("No download link available for this URL", quote=True)
-                       continue
-                except Exception as e:
-                   print(e)
-                   await message.reply_text("Some Error Occurred", quote=True)
-                   continue 
-                for link in link_data:
-                    name, size, size_bytes, dlink, thumb  = await get_data(link)
-                    if dlink:
-                      try:                        
-                         ril = await client.send_video(-1002069870125, dlink, caption="Indian")
-                         file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                         unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
-                         direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await ril.copy(message.from_user.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                         await nil.edit_text(f"Completed\n\n**File Direct Link**: [Link]({direct_url})", disable_web_page_preview=True)
-                         await store_file(unique_id, file_id)
-                         await store_url(url, file_id, unique_id, direct_url)
-                      except FloodWait as e:
-                         await asyncio.sleep(e.value)
-                      except Exception as e:
-                         print(e)
-                         if int(size_bytes) > 524288000 and not name.lower().endswith(('.mp4', '.mkv', '.webm')):
-                                  await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                                  await nil.edit_text("Completed")
-                         else:
-                             try:                               
-                                vid_path = await loop.run_in_executor(None, download_file, dlink, name)
-                                thumb_path = await loop.run_in_executor(None, download_thumb, thumb)
-                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
-                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
-                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                                await ril.copy(message.from_user.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                                await nil.edit_text(f"Completed\n\n**File Direct Link**: [Link]({direct_url})", disable_web_page_preview=True)                                
-                                await store_file(unique_id, file_id)
-                                await store_url(url, file_id, unique_id, direct_url)
-                             except FloodWait as e:
-                                await asyncio.sleep(e.value)
-                             except Exception as e:
-                                 print(e)                                                         
-                                 await client.send_photo(message.from_user.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link**: {dlink}")
-                                 await nil.edit_text("Completed")
-                             finally:
-                                    if vid_path and os.path.exists(vid_path):
-                                         os.remove(vid_path)
-                                    if thumb_path and os.path.exists(thumb_path):
-                                         os.remove(thumb_path)
-        except FloodWait as e:
-            await asyncio.sleep(e.value)                              
-        except Exception as e:
-            print(e)
-            await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                 del queue_url[user_id]
-
-"""
 
 
 async def terabox_dm(client, message):
@@ -590,6 +464,8 @@ async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
+    asyncio.create_task(initialize_url_cache())
+    asyncio.create_task(initialize_file_cache())
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
