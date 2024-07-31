@@ -476,7 +476,6 @@ async def init():
     asyncio.create_task(initialize_token_cache())
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
-  
     asyncio.create_task(initialize_url_cache())
     asyncio.create_task(initialize_file_cache())
     print("[LOG] - Yukki Chat Bot Started")
