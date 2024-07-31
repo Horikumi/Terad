@@ -69,6 +69,7 @@ SUDO_USERS = config.SUDO_USER
 ADMIN_USERS = config.ADMIN_USER
 save = {}
 shorten = {}
+verify = set()
 
 async def save_link():
     chat_id = 12345
@@ -92,12 +93,22 @@ async def get_token():
 
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
+        verify.add(chat_id)
         timer_after = datetime.now() + timedelta(minutes=720)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
         
-
+async def is_token(chat_id):
+    if chat_id in verify:
+        return True    
+    result = await tokendb.find_one({"chat_id": chat_id})
+    if result:
+        verify.add(chat_id)  # Optionally add to verify set for faster future lookups
+        return True
+    return False
+  
 async def delete_token(chat_id):
+      verify.discard(chat_id)
       await tokendb.delete_one({"chat_id": chat_id})         
 
 
@@ -452,7 +463,7 @@ async def terabox_dm(client, message):
           return await message.reply_text("No Urls Found")
         if not await is_join(message.from_user.id):
               return await message.reply_text("First Join @CheemsBackup to Use me")
-        if not await tokendb.find_one({"chat_id": message.from_user.id}):
+        if not await is_token(message.from_user.id):
               return await token_fun(client, message)
         try: 
              user_id = int(message.from_user.id)
