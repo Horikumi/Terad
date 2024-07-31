@@ -86,6 +86,7 @@ async def get_token():
   if not token:
       document = {"chat_id": chat_id}
       hek = await rokendb.find_one(document)
+      shorten[chat_id] = hek['token']
       return hek['token']
   return token
 
