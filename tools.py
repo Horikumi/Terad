@@ -289,16 +289,16 @@ async def get_data(link_data):
     print(e)
     return None, None, None, None, None, None, None
 
-async def extract_links(message):
+async def extract_link(message):
     # fetch all links
     try:
         url_pattern = r'https?://\S+'        
         matches = re.findall(url_pattern, message)
 
-        return matches[:1]
+        return matches[0]
     except Exception as e:
         print(f"Error extracting links: {e}")
-        return []
+        return None
         
 
 async def get_formatted_size_async(size_bytes):
@@ -384,11 +384,17 @@ async def extract_code(url: str):
 
 async def extract_video_id(url):
     if isinstance(url, str):
-        match = re.search(r'/s/([^\?/#&]+)', url)
-        if match:
-            return match.group(1)
-        else:
-            raise ValueError("URL does not contain a valid video ID")
+        # Check for /s/ pattern
+        match_s = re.search(r'/s/([^\?/#&]+)', url)
+        if match_s:
+            return match_s.group(1)
+        
+        # Check for surl= pattern
+        match_surl = re.search(r'surl=([^\?&#]+)', url)
+        if match_surl:
+            return match_surl.group(1)
+        
+        raise ValueError("URL does not contain a valid video ID")
     else:
         raise ValueError("Input must be a string")
 
