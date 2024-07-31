@@ -142,10 +142,10 @@ async def get_file_id(url):
             direct_link = document.get("direct_link")            
             return file_id, direct_link
         else:
-            return None
+            return None, None
     except Exception as e:
         print(f"Error retrieving file IDs and direct links for URL: {e}")
-        return None
+        return None, None
 
 joined = set()
 
@@ -455,19 +455,18 @@ async def terabox_dm(client, message):
              queue_url[user_id] = True                            
              if not await check_url_patterns_async(str(url)):
                     return await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)                    
-         #    file, link = await get_file_id(url)
-         #    if file:                
-         #            try:
-         #                await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
-         #            except FloodWait as e:
-         #                  await asyncio.sleep(e.value)
-         #            except Exception as e:
-         #                  print(e)
-         #                  return                
+             file, link = await get_file_id(url)
+             if file:                
+                     try:
+                         await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                     except FloodWait as e:
+                           await asyncio.sleep(e.value)
+                     except Exception as e:
+                           print(e)
+                           return                
              nil = await message.reply_text("🔎 Processing URL...", quote=True)
              try:
                  link_data = await fetch_download_link_async(url)
-                 print(link_data)
                  if link_data is None:
                       return await message.reply_text("No download link available for this URL", quote=True)                       
              except Exception as e:
