@@ -153,14 +153,14 @@ async def initialize_file_cache():
     except Exception as e:
         print(f"Error initializing file cache: {e}")
 
-
-async def store_file(unique_id, file_id):
-    file = await file_collection.find_one({'unique_id': unique_id})
+async def store_file(url, unique_id, file_id):
+    url = await extract_code(url)
+    file = await file_collection.find_one({'url': url})
     if file:
         return
-    await file_collection.insert_one({'unique_id': unique_id, 'file_id': file_id})
+    await file_collection.insert_one({'url': url, 'unique_id': unique_id, 'file_id': file_id})
     file_dict[unique_id] = {'file_id': file_id}  # Store in file_dict
-
+  
   
 async def add_served_user(user_id: int):
         is_served = await usersdb.find_one({"user_id": user_id})
@@ -175,19 +175,18 @@ async def get_served_users() -> list:
         return users_list
 
 
-async def store_url(url, file_id, unique_id, direct_link):
+async def store_url(url, file_id, direct_link):
     try:
         url = await extract_code(url)
         document = await urldb.find_one({"url": url})        
         if not document:
-            await urldb.insert_one({"url": url, "file_id": file_id, "unique_id": unique_id, "direct_link": direct_link})            
+            await urldb.insert_one({"url": url, "file_id": file_id, "direct_link": direct_link})            
             url_cache[url] = {
-                'file_id': file_id,
-                'unique_id': unique_id,
+                'file_id': file_id,                
                 'direct_link': direct_link
             }
     except Exception as e:
-        print(f"Error storing URL, file ID, unique ID, and direct link: {e}")
+        print(f"Error storing URL, file ID, direct link: {e}")
 
 async def initialize_url_cache():
      try:
@@ -198,13 +197,11 @@ async def initialize_url_cache():
             if url:
                 url_cache[url] = {
                     'file_id': document.get("file_id"),
-                    'unique_id': document.get("unique_id"),
                     'direct_link': document.get("direct_link")
                 }
         print("URL cache initialized with data from urldb.")
      except Exception as e:
         print(f"Error initializing URL cache: {e}")
-
 
 async def get_file_id(url):
     try:
@@ -226,6 +223,7 @@ async def get_file_id(url):
     except Exception as e:
         print(f"Error retrieving file IDs and direct links for URL: {e}")
         return None, None
+      
 
 
 joined = set()
@@ -383,8 +381,8 @@ async def terabox_dm(client, message):
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
                          await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
-                         await store_file(unique_id, file_id)
-                         await store_url(url, file_id, unique_id, direct_url)
+                         await store_file(url, unique_id, file_id)
+                         await store_url(url, file_id, direct_url)
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
@@ -410,8 +408,8 @@ async def terabox_dm(client, message):
                                   os.remove(thumb_path)
                                 except:
                                   pass
-                                await store_file(unique_id, file_id)
-                                await store_url(url, file_id, unique_id, direct_url)
+                                await store_file(url, unique_id, file_id)
+                                await store_url(url, file_id, direct_url)
                              except FloodWait as e:
                                 await asyncio.sleep(e.value)
                              except Exception as e:
