@@ -420,7 +420,7 @@ async def terabox_dm(client, message):
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
                                  keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
-                                 await nil.edit_text("Completed")
+                                 return await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
                                          os.remove(vid_path)
