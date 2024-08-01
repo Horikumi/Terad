@@ -345,7 +345,7 @@ async def tera_private(client, message):
 async def terabox_dm(client, message):
         url = await extract_link(message.text or message.caption)
         if not url:
-          return await message.reply_text("No Urls Found")
+              return await message.reply_text("No Urls Found")
         if not await is_join(message.from_user.id):
               return await message.reply_text("First Join @CheemsBackup to Use me")
         if not await is_token(message.from_user.id):
@@ -360,7 +360,7 @@ async def terabox_dm(client, message):
              file, link = await get_file_id(url)
              if file:                
                      try:
-                         await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
+                         return await client.send_cached_media(message.chat.id, file, caption=f"**Direct File Link**: {link}")
                      except FloodWait as e:
                            await asyncio.sleep(e.value)
                      except Exception as e:
