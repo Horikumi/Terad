@@ -372,16 +372,21 @@ async def shorten_url():
     print(e)
 
       
-async def extract_code(url: str):
-    pattern1 = r"/s/(\w+)"
-    pattern2 = r"surl=(\w+)"
-    match = re.search(pattern1, url)
-    if match:
-        return match.group(1)
-    match = re.search(pattern2, url)
-    if match:
-        return match.group(1)
-    return url
+async def extract_code(url):
+    if isinstance(url, str):
+        # Check for /s/ pattern
+        match_s = re.search(r'/s/([^\?/#&]+)', url)
+        if match_s:
+            return match_s.group(1)
+        
+        # Check for surl= pattern
+        match_surl = re.search(r'surl=([^\?&#]+)', url)
+        if match_surl:
+            return match_surl.group(1)
+        
+        return url
+    else:
+        return url
 
 
 async def extract_video_id(url):
