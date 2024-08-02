@@ -394,8 +394,6 @@ async def extract_video_id(url):
         if match_surl:
             return match_surl.group(1)
         
-        raise ValueError("URL does not contain a valid video ID")
+        return url
     else:
-        raise ValueError("Input must be a string")
-
-
+        return url
