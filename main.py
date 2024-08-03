@@ -500,7 +500,7 @@ async def terabox_dm(client, message):
                          await asyncio.sleep(e.value)
                       except Exception as e:
                          print(e)                      
-                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 104857600:
+                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
                                  play_url = await extract_video_id(url)
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
                                  keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
