@@ -457,9 +457,9 @@ async def terabox_dm(client, message):
               return await token_fun(client, message)
         try: 
             user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                  return await message.reply_text("Your One Url is Already In Process pls Wait for it to Complete")                        
-            queue_url[user_id] = True
+        #    if user_id in queue_url:
+        #          return await message.reply_text("Your One Url is Already In Process pls Wait for it to Complete")                        
+        #    queue_url[user_id] = True
             for url in urls:                
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
@@ -499,52 +499,20 @@ async def terabox_dm(client, message):
                       except FloodWait as e:
                          await asyncio.sleep(e.value)
                       except Exception as e:
-                         print(e)                      
-                         if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 104857600:
-                                 play_url = await extract_video_id(url)
-                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
-                                 await nil.edit_text("Completed")
-                         else:
-                             try:
-                                vid_path = await download_file(dlink, name)
-                                thumb_path = await download_thumb(thumb)                                                                                       
-                                ril = await client.send_video(-1002069870125, vid_path, thumb=thumb_path, caption="Indian")
-                                file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
-                                unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
-                                direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
-                                await nil.edit_text("Completed")
-                                try:
-                                  os.remove(vid_path)
-                                  os.remove(thumb_path)
-                                except:
-                                  pass
-                                await store_file(unique_id, file_id)
-                                await store_url(url, file_id, unique_id, direct_url)
-                             except FloodWait as e:
-                                await asyncio.sleep(e.value)
-                             except Exception as e:
-                                 print(e)
-                                 play_url = await extract_video_id(url)
-                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
-                                 await nil.edit_text("Completed")
-                             finally:
-                                    if vid_path and os.path.exists(vid_path):
-                                         os.remove(vid_path)
-                                    if thumb_path and os.path.exists(thumb_path):
-                                         os.remove(thumb_path)
+                         print(e)                                         
+                         play_url = await extract_video_id(url)
+                         play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
+                         keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
+                         await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
+                         await nil.edit_text("Completed")                           
         except FloodWait as e:
             await asyncio.sleep(e.value)                             
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                 del queue_url[user_id]
+     #   finally:
+        #    if user_id in queue_url:
+     #            del queue_url[user_id]
               
 
 async def remove_tokens():
