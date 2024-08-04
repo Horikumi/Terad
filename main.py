@@ -656,10 +656,7 @@ async def init():
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
     asyncio.create_task(get_counts())
-    await app.set_bot_commands([
-       BotCommand("share", "Get the share link and stats 🔥"),
-       BotCommand("start", "Start the bot 🚀")])
-       BotCommand("rules", "See the bot rules 🚀")])
+    await app.set_bot_commands([BotCommand("share", "Get the share link and stats 🔥"), BotCommand("start", "Start the bot 🚀")], BotCommand("rules", "See the bot rules 🚀")])
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
