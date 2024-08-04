@@ -9,7 +9,7 @@ from pyrogram.types import Message
 from datetime import datetime, timedelta
 import pyrogram, asyncio, os, uvloop, time
 from pyrogram import Client, filters, idle, enums
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, BotCommand
 from sys import version as pyver
 from pyrogram import __version__ as pyrover
 import config
@@ -240,7 +240,7 @@ async def start_func(client, message):
             if not check:
                 await add_refer_user(message.from_user.id)
                 await save_refer(user.id)
-                await app.send_message(message.from_user.id, f"You were refered by {user.mention}")
+            #    await app.send_message(message.from_user.id, f"You were refered by {user.mention}")
     await message.reply_text("Send Only Terabox Urls")
     return await add_served_user(message.chat.id)
 
@@ -656,6 +656,10 @@ async def init():
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
     asyncio.create_task(get_counts())
+    await app.set_bot_commands([
+       BotCommand("share", "Get the share link and stats 🔥"),
+       BotCommand("start", "Start the bot 🚀")])
+       BotCommand("rules", "See the bot rules 🚀")])
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
