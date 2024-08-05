@@ -266,7 +266,7 @@ async def token_fun(client, message):
         token = await get_token()
         keyboard = InlineKeyboardMarkup([
                  [InlineKeyboardButton("Refresh Token", url=token)],
-                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/AdrinoTutorial/2")]
+                 [InlineKeyboardButton("Video Tutorial", url="https://t.me/TokenTutorial/4")]
         ])
         return await message.reply_text("Your Ads Token is expired and needs to be refreshed.\n\nToken Timeout: 12 hours\n\nToken Usage: Pass 1 ad to use the bot for the next 12 hours.\n\nFor Apple users: Copy the token and paste it into your browser.\n\nWatch a video tutorial if you encounter any issues.", reply_markup=keyboard)
 
@@ -656,8 +656,9 @@ async def remove_links():
 async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
-#    asyncio.create_task(remove_links())
+    asyncio.create_task(remove_links())
     asyncio.create_task(get_counts())
+    await save_link()
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
