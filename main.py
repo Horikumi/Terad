@@ -240,8 +240,10 @@ async def start_func(client, message):
             if not check:
                 await add_refer_user(message.from_user.id)
                 await save_refer(user.id)
-            #    await app.send_message(message.from_user.id, f"You were refered by {user.mention}")
-    await message.reply_text("Send Only Terabox Urls")
+                await app.send_message(message.from_user.id, f"Welcome to TeraDLRoBot! 🚀\nYou are successfully refereed by {user.mention}👍\nType /share to share other users your own link")
+        else:
+             return await message.reply_text("You can't refer yourself 🤦‍♂️")
+    await message.reply_text("Send/Forward me a Terabox Link and I will give you the direct download file/link.... 🚀\nSend Example Link :-\nhttps://teraboxapp.com/s/1EWkWY66FhZKS2WfxwBgd0Q")
     return await add_served_user(message.chat.id)
 
 
@@ -561,7 +563,7 @@ async def terabox_dm(client, message):
                          file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                          unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                         await ril.copy(message.chat.id, caption=f"**Share this bot Using /share**\n**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
                          await store_file(unique_id, file_id)
                          await store_url(url, file_id, unique_id, direct_url)
@@ -573,7 +575,7 @@ async def terabox_dm(client, message):
                                  play_url = await extract_video_id(url)
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
                                  keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Share this bot Using /share**\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -583,7 +585,7 @@ async def terabox_dm(client, message):
                                 file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                 unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
                                 direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                                await ril.copy(message.chat.id, caption=f"**Share this bot Using /share**\n**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                 await nil.edit_text("Completed")
                                 try:
                                   os.remove(vid_path)
@@ -599,7 +601,7 @@ async def terabox_dm(client, message):
                                  play_url = await extract_video_id(url)
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
                                  keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Share this bot Using /share**\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
