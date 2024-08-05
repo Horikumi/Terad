@@ -1,7 +1,7 @@
 import asyncio
 from sys import version as pyver
 
-import pyrogram, uvloop
+import pyrogram, uvloop, pytz
 from pyrogram import __version__ as pyrover
 from pyrogram import filters, idle
 from pyrogram.errors import FloodWait
@@ -75,7 +75,8 @@ save = {}
 async def save_link():
     chat_id = 12345
     token = await shorten_url()
-    timer_after = datetime.now() + timedelta(minutes=720)
+    utc_now = datetime.now(pytz.utc)
+    timer_after = utc_now + timedelta(minutes=720)
     await rokendb.update_one(
         {"chat_id": chat_id}, 
         {"$set": {"token": token, "timer_after": timer_after}}
@@ -89,7 +90,8 @@ async def get_token():
 
 async def save_token(chat_id):
     if not await tokendb.find_one({"chat_id": chat_id}):
-        timer_after = datetime.now() + timedelta(minutes=720)
+        utc_now = datetime.now(pytz.utc)
+        timer_after = utc_now + timedelta(minutes=720)
         document = {"chat_id": chat_id, "timer_after": timer_after}
         await tokendb.insert_one(document)
         
@@ -622,7 +624,7 @@ async def remove_tokens():
         while True:
           try:
             await asyncio.sleep(10)
-            current_time = datetime.now()
+            current_time = datetime.now(pytz.utc)
             filter_query = {"timer_after": {"$lt": current_time}}
             deleted_documents = await tokendb.find(filter_query).to_list(None)
             for document in deleted_documents:
@@ -641,7 +643,7 @@ async def remove_links():
     while True:
         try:
             await asyncio.sleep(10)
-            current_time = datetime.now()
+            current_time = datetime.now(pytz.utc)
             filter_query = {"timer_after": {"$lt": current_time}}
             document = await rokendb.find(filter_query).to_list(None)
             if document:            
