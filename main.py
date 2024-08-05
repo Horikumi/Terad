@@ -251,7 +251,7 @@ async def shar_fun(client, message: Message):
 
 async def share_func(client, message):
    invit = await get_refer_count(message.from_user.id)
-   return await message.reply_text(f"🎉 Share this link to your friends and get benefits for each friend who joins using your link! 🎉 \n\n Your Referral Link is below, Share this to your friends or on social media to earn money 💸 ($1 or ₹100 / 1k Users\nhttps://t.me/TeraDLRobot?start=invite{message.from_user.id}\n\n You have referred {invit} users. Check => /share 🎶 and see the /rules")
+   return await message.reply_text(f"🎉 Share this link to your friends and get benefits for each friend who joins using your link! 🎉 \n\n Your Referral Link is below, Share this to your friends or on social media to earn money 💸 ($1 or ₹100 / 1k Users\nhttps://t.me/TeraDLRobot?start=invite{message.from_user.id}\n\n You have referred {invit} users. Check => /share 🎶 and see the /rules", disable_web_page_preview=True)
 
 @app.on_message(filters.command("rules") & filters.private)
 async def rule_fun(client, message: Message):
