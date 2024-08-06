@@ -164,24 +164,35 @@ def get_duration(file_path):
 
 
 async def create_session():
-    headers = {
-     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-     'Accept-Language': 'en-US,en;q=0.9',
-     'Cache-Control': 'no-cache',
-     'Connection': 'keep-alive',
-     'Cookie': 'csrfToken=CQmEyBa5-1tA-f3IcGdDNRYx; browserid=FRCyG1kF7JJ3l93SwK5GPjJnXXtviAPMlImyd8s1JqW07cnWxeUoTfYxq_M=; lang=en; __bid_n=190a1da0a0bf7a0aa54207; __stripe_mid=7218df1d-1e82-4a12-b0ee-e394540a88c170797c; __stripe_sid=f6688ee7-721b-4608-8642-1d7c94fe53cb764589; ndus=YyRg23CteHuiRlBaxplImMjmN1UOThgGaZFdkyxx; _ga=GA1.1.1630053312.1720702415; ndut_fmt=A2C896D1445B2F7E2A69CFD5FE415DD5F6667658A0468DF89FED8C1567C587A4; ab_sr=1.0.1_OGEzMjcyMmVhZTA4NmI1NTFiNzcwMDYzNDM2Njg4NzkwNjU1MTZhM2FkYjA5NWQ1YTE1Mjc2MTRkMjlmMjUxMmJkZWIxNzljYTY2YTg5NjAzNzczZWQ5ZGI5OTEwNGM0ODk5OWQyZjI1MDVmZDgzNzE3NTY4NTVhZGJiODZmMTE0YWVlNDdlOGI1YzRmZDFlYWJhMzMzZWVhMmZjODhkOA==; ab_ymg_result={"data":"51efd8e827622b901b5291710e3f479ad74fa1da442bda01fac2c2ee9b918b34959181f13e05c4ed8f926dfb83fa34afdedbe8c82dca8eec846b5dc979f4e2bbd1c6dd3b822572deea1f663f98f9f0812b8ac9f07698eccb03426a160723c5c8704ef7bb6d87a276efee30e2189bb80e0f7bef7d87b0ad7d63596a7614c5eebc","key_id":"66","sign":"9777c799"}; _ga_06ZNKL8C2E=GS1.1.1720702415.1.1.1720702538.50.0.0',
-     'Pragma': 'no-cache',
-     'Sec-Fetch-Dest': 'document',
-     'Sec-Fetch-Mode': 'navigate',
-     'Sec-Fetch-Site': 'none',
-     'Sec-Fetch-User': '?1',
-     'Upgrade-Insecure-Requests': '1',
-     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-     'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-     'sec-ch-ua-mobile': '?0',
-     'sec-ch-ua-platform': '"Windows"',
+    cookies = {
+    'browserid': 'FRCyG1kF7JJ3l93SwK5GPjJnXXtviAPMlImyd8s1JqW07cnWxeUoTfYxq_M=',
+    'lang': 'en',
+    '__bid_n': '190a1da0a0bf7a0aa54207',
+    '__stripe_mid': '7218df1d-1e82-4a12-b0ee-e394540a88c170797c',
+    'ndus': 'YyRg23CteHuiRlBaxplImMjmN1UOThgGaZFdkyxx',
+    '_ga': 'GA1.1.1630053312.1720702415',
+    '_ga_06ZNKL8C2E': 'GS1.1.1720702415.1.1.1720702538.50.0.0',
+    'csrfToken': '885JXJ0EYDqBe-aIAa9l9QVO',
+    'ndut_fmt': '6BA09E87D8EFFF25093E69D3577272DFD58C0DC7A21F4A3D2D9A379FE615A1D1',
     }
-    my_session = aiohttp.ClientSession(headers=headers) 
+    headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Cookie': 'browserid=FRCyG1kF7JJ3l93SwK5GPjJnXXtviAPMlImyd8s1JqW07cnWxeUoTfYxq_M=; lang=en; bid_n=190a1da0a0bf7a0aa54207; stripe_mid=7218df1d-1e82-4a12-b0ee-e394540a88c170797c; ndus=YyRg23CteHuiRlBaxplImMjmN1UOThgGaZFdkyxx; _ga=GA1.1.1630053312.1720702415; _ga_06ZNKL8C2E=GS1.1.1720702415.1.1.1720702538.50.0.0; csrfToken=885JXJ0EYDqBe-aIAa9l9QVO; ndut_fmt=6BA09E87D8EFFF25093E69D3577272DFD58C0DC7A21F4A3D2D9A379FE615A1D1',
+    'Pragma': 'no-cache',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    }
+    my_session = aiohttp.ClientSession(cookies=cookies, headers=headers) 
     return my_session
 
 async def fetch_download_link_async(url):
