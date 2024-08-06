@@ -295,7 +295,7 @@ async def extract_links(message):
         url_pattern = r'https?://\S+'        
         matches = re.findall(url_pattern, message)
 
-        return matches[:1]
+        return matches
     except Exception as e:
         print(f"Error extracting links: {e}")
         return []
@@ -371,6 +371,7 @@ async def shorten_url():
 
       
 async def extract_code(url: str):
+  try:
     pattern1 = r"/s/(\w+)"
     pattern2 = r"surl=(\w+)"
     match = re.search(pattern1, url)
@@ -380,20 +381,25 @@ async def extract_code(url: str):
     if match:
         return match.group(1)
     return url
+  except Exception as e:
+    print(e)
+    return url
 
 
 async def extract_video_id(url):
+  try:
     if isinstance(url, str):
         # Check for /s/ pattern
         match_s = re.search(r'/s/([^\?/#&]+)', url)
         if match_s:
-            return match_s.group(1)
-        
+            return match_s.group(1)        
         # Check for surl= pattern
         match_surl = re.search(r'surl=([^\?&#]+)', url)
         if match_surl:
-            return match_surl.group(1)
-        
+            return match_surl.group(1)      
         return url
     else:
         return url
+  except Exception as e:
+    print(e)
+    return url
