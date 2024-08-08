@@ -26,8 +26,6 @@ usersdb = db.users
 urldb = db.urls
 tokendb = db.token
 rokendb = db.roken
-referdb = db.refer
-countdb = db.count
 
 API_ID = "6"
 API_HASH = "eb06d4abfb49dc3eeb1aeb98ae0f581e"
@@ -158,44 +156,6 @@ async def get_file_ids(url):
     except Exception as e:
         print(f"Error retrieving file IDs and direct links for URL: {e}")
         return None
-
-
-async def get_counts():
-      await asyncio.sleep(5)
-      async for document in countdb.find({}):  # Iterate over all documents in the collection
-         user_id = document["user_id"]
-         if user_id not in counts:  # Check if user ID is not already in the dictionary
-             count = document.get("notes", 0)
-             counts[user_id] = count
-        
-async def get_refer_count(user_id: int):
-        if user_id in counts:
-           return counts[user_id]
-        document = await countdb.find_one({"user_id": user_id})
-        if document:
-             return document["notes"]
-        return 0
-      
-async def save_refer(user_id: int):  
-        if user_id in counts:
-             counts[user_id] += 1
-        else:
-             counts[user_id] = 1
-        await countdb.update_one(
-            {"user_id": user_id}, {"$inc": {"notes": 1}}, upsert=True
-        )
-      
-async def is_refer_user(user_id: int) -> bool:
-        refer = await referdb.find_one({"user_id": user_id}) 
-        return bool(refer)
-      
-async def add_refer_user(user_id: int):
-          if not await is_refer_user(user_id):
-                 return await referdb.insert_one({"user_id": user_id})
-
-async def remove_refer_user(user_id: int):
-          if await is_refer_user(user_id):
-                return await referdb.delete_one({"user_id": user_id})
             
 joined = set()
 
@@ -229,40 +189,10 @@ async def start_func(client, message):
     elif len(message.command) > 1 and "token" in message.command[1]:
             # token = message.command[1].replace("token", "")
              await message.reply_text("🎉 Token Activated 🎉")
-             return await save_token(message.from_user.id)
-    elif len(message.command) > 1 and "invite" in message.command[1]:
-        name = message.command[1].replace("invite", "")        
-        try:
-            await app.resolve_peer(int(name))
-        except:
-          pass
-        user = await app.get_users(int(name))
-        if user.id and user.id != message.from_user.id:
-            check = await is_refer_user(message.from_user.id)
-            if not check:
-                await add_refer_user(message.from_user.id)
-                await save_refer(user.id)
-                await app.send_message(message.from_user.id, f"Welcome to TeraDLRoBot! 🚀\nYou are successfully refereed by {user.mention}👍\nType /share to share other users your own link")
-        else:
-             return await message.reply_text("You can't refer yourself 🤦‍♂️")
-    await message.reply_text("Send/Forward me a Terabox Link and I will give you the direct download file/link.... 🚀\nSend Example Link :-\nhttps://teraboxapp.com/s/1EWkWY66FhZKS2WfxwBgd0Q")
+             return await save_token(message.from_user.id)  
+    await message.reply_text("Send Only TeraBox Urls Plz")
     return await add_served_user(message.chat.id)
 
-
-@app.on_message(filters.command("share") & filters.private)
-async def shar_fun(client, message: Message):
-    asyncio.create_task(share_func(client, message))
-
-async def share_func(client, message):
-   invit = await get_refer_count(message.from_user.id)
-   return await message.reply_text(f"🎉 Share this link to your friends and get benefits for each friend who joins using your link! 🎉 \n\n Your Referral Link is below, Share this to your friends or on social media to earn money 💸 ($1 or ₹100 / 1k Users\nhttps://t.me/TeraDLRobot?start=invite{message.from_user.id}\n\n You have referred {invit} users. Check => /share 🎶 and see the /rules", disable_web_page_preview=True)
-
-@app.on_message(filters.command("rules") & filters.private)
-async def rule_fun(client, message: Message):
-    asyncio.create_task(rules_func(client, message))
-
-async def rules_func(client, message):
-   return await message.reply_text("1. You can refer unlimited person per day.\n\n2. You can't refer yourself.\n\n3. You will get $1 or ₹100 for each 1k users you refer.\n\n4. After refering 1k users you can send screenshot of your refered users to @CheemsSupportBot for payment\n\n5. All refers should be real if caught you will be banned from the bot")
 
 async def token_fun(client, message):
         token = await get_token()
@@ -565,7 +495,7 @@ async def terabox_dm(client, message):
                          file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                          unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                         
                          direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                         await ril.copy(message.chat.id, caption=f"**Earn Money 🤑 By /share**\n**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                         await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                          await nil.edit_text("Completed")
                          await store_file(unique_id, file_id)
                          await store_url(url, file_id, unique_id, direct_url)
@@ -574,10 +504,10 @@ async def terabox_dm(client, message):
                       except Exception as e:
                          print(e)                      
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
-                                 play_url = await extract_video_id(url)
-                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Earn Money 🤑 By /share**\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
+                                 play = await extract_video_id(url)
+                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play}"
+                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://super-theo-roton.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                          else:
                              try:
@@ -587,7 +517,7 @@ async def terabox_dm(client, message):
                                 file_id = (ril.video.file_id if ril.video else (ril.document.file_id if ril.document else (ril.animation.file_id if ril.animation else (ril.sticker.file_id if ril.sticker else (ril.photo.file_id if ril.photo else ril.audio.file_id if ril.audio else None)))))
                                 unique_id = (ril.video.file_unique_id if ril.video else (ril.document.file_unique_id if ril.document else (ril.animation.file_unique_id if ril.animation else (ril.sticker.file_unique_id if ril.sticker else (ril.photo.file_unique_id if ril.photo else ril.audio.file_unique_id if ril.audio else None)))))                     
                                 direct_url = f"https://t.me/teradlrobot?start=unqid{unique_id}"
-                                await ril.copy(message.chat.id, caption=f"**Earn Money 🤑 By /share**\n**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
+                                await ril.copy(message.chat.id, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n\n**Direct File Link**: {direct_url}")
                                 await nil.edit_text("Completed")
                                 try:
                                   os.remove(vid_path)
@@ -600,10 +530,10 @@ async def terabox_dm(client, message):
                                 await asyncio.sleep(e.value)
                              except Exception as e:
                                  print(e)
-                                 play_url = await extract_video_id(url)
-                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play_url}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online", web_app=WebAppInfo(url=play_url))]]
-                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Earn Money 🤑 By /share**\n**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
+                                 play = await extract_video_id(url)
+                                 play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play}"
+                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://super-theo-roton.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
+                                 await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                              finally:
                                     if vid_path and os.path.exists(vid_path):
@@ -659,7 +589,7 @@ async def init():
     await app.start()
     asyncio.create_task(remove_tokens())
     asyncio.create_task(remove_links())
-    asyncio.create_task(get_counts())
+    await app.set_bot_commands([BotCommand("start", "Start the bot")])
     print("[LOG] - Yukki Chat Bot Started")
     await idle()
   
