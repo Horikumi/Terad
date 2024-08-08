@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Video Player</title>
+    <link rel="stylesheet" href="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.css" type="text/css"/>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            overflow: hidden;
+        }
+        .video-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8); /* Dark background for video player */
+            z-index: 10;
+            overflow: hidden;
+        }
+        #video-id {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-player">
+        <video id="video-id" controls poster="{{ thumb }}">
+            <source src="{{ play_url }}" type="application/x-mpegURL">
+        </video>
+    </div>
+
+    <script src="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.js"></script>
+    <script>
+        var myFP = fluidPlayer('video-id', {
+            "layoutControls": {
+                "controlBar": {
+                    "autoHideTimeout": 3,
+                    "animated": true,
+                    "autoHide": true
+                },
+                "autoPlay": false,
+                "mute": false,
+                "allowTheatre": true,
+                "playPauseAnimation": true,
+                "playbackRateEnabled": true,
+                "allowDownload": false,
+                "playButtonShowing": true,
+                "fillToContainer": true,
+                "posterImage": "{{ thumb }}" // Ensure this URL is correctly replaced
+            },
+            "vastOptions": {
+                "adList": [],
+                "adCTAText": false,
+                "adCTATextPosition": ""
+            }
+        });
+    </script>
+</body>
+</html>
