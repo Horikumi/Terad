@@ -506,7 +506,7 @@ async def terabox_dm(client, message):
                          if (not name.endswith(".mp4") and not name.endswith(".mkv") and not name.endswith(".Mkv") and not name.endswith(".webm")) or int(size_bytes) > 314572800:
                                  play = await extract_video_id(url)
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://super-theo-roton.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
+                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://yielding-ruth-shikharvri.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                          else:
@@ -532,7 +532,7 @@ async def terabox_dm(client, message):
                                  print(e)
                                  play = await extract_video_id(url)
                                  play_url = f"https://apis.forn.fun/tera/m3u8.php?id={play}"
-                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://super-theo-roton.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
+                                 keyboard = [[InlineKeyboardButton("Watch Online ▶️", web_app=WebAppInfo(url=f"https://yielding-ruth-shikharvri.koyeb.app/play?play_url={play_url}&thumb={thumb}"))]]
                                  await client.send_photo(message.chat.id, thumb, has_spoiler=True, caption=f"**Title**: `{name}`\n**Size**: `{size}`\n**Download Link V1**: [Link]({dlink})\n**Download Link V2**: [Link]({dlink2})\n**Download Link V3**: [Link]({dlink3})", reply_markup=InlineKeyboardMarkup(keyboard))
                                  await nil.edit_text("Completed")
                              finally:
@@ -561,7 +561,7 @@ async def remove_tokens():
                 chat_id = document.get("chat_id")           
                 try:
                     await delete_token(chat_id)
-                  #  await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
+                    await app.send_message(chat_id, "Your Token Has Been Expired please re-generate to continue Work.")
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
                 except Exception as e:
