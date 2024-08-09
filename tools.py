@@ -250,21 +250,7 @@ async def fetch_download_link_async(url):
     finally:
         await my_session.close()
 
-
-async def get_url(download_link):
-  try:
-    async with aiohttp.ClientSession() as session:
-        for url in download_urls:
-            full_url = url + download_link[download_link.index("/", 8):]
-            async with session.get(full_url) as response:
-                if response.status == 200:
-                    return full_url
-    return None
-  except Exception as e:
-    print(e)
-    return None
-     
-  
+      
 async def get_direct_link(url):
     try:
         my_session = await create_session()
