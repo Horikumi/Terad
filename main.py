@@ -63,6 +63,7 @@ app = pyrogram.Client(
     API_ID,
     API_HASH,
     bot_token=BOT_TOKEN,
+    max_concurrent_transmissions=5,
 )
 
 START_TIME = time.time()
