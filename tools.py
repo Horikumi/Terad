@@ -8,8 +8,6 @@ from io import BytesIO
 
 #loop = asyncio.get_event_loop()
 
-download_urls = ["https://d3.terabox.app", "https://d3.1024tera.com", "https://d4.terabox.app", "https://d4.1024tera.com", "https://d5.terabox.app", "https://d5.1024tera.com"]
-
 async def update_progress(downloaded, total, message, state="Uploading"):
     try:
         percentage = (downloaded / total) * 100
@@ -273,7 +271,8 @@ async def get_direct_link(url):
         async with my_session.head(url) as response:
             response.raise_for_status()
             direct_link = response.headers.get('Location')
-            download_link = "https://d8.freeterabox.com" + direct_link[direct_link.index("/", 8):]
+            download_link = "https://d3.terabox.app" + direct_link[direct_link.index("/", 8):]
+            direct_link = "https://d8.freeterabox.com" + direct_link[direct_link.index("/", 8):]
             return direct_link, download_link
     except Exception as e:
         print(f"Error fetching direct link: {e}")
@@ -288,12 +287,6 @@ async def get_data(link_data):
     file_name = link_data["server_filename"]
     file_size = await get_formatted_size_async(link_data["size"])
     direct_link, download_link = await get_direct_link(link_data["dlink"])
-    if not download_link:
-        download_link = await get_url(link_data["dlink"])
-        if not download_link:
-           url = random.choice(download_urls)
-           download_link = url + link_data["dlink"][link_data["dlink"].index("/", 8):]
-  #  download_link = await shorten_url(download_link)
     thumb = link_data["thumbs"]["url3"]
     return file_name, file_size, link_data["size"], download_link, link_data["dlink"], direct_link, thumb
   except Exception as e:
