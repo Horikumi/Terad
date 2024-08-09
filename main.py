@@ -281,10 +281,6 @@ async def terabox_dm(client, message):
         if not await tokendb.find_one({"chat_id": message.from_user.id}):
               return await token_fun(client, message)
         try: 
-            user_id = int(message.from_user.id)
-            if user_id in queue_url:
-                  return await message.reply_text("Your One Url is Already In Process pls Wait for it to Complete")                        
-            queue_url[user_id] = True
             for url in urls:                
                 if not await check_url_patterns_async(str(url)):
                     await message.reply_text("⚠️ Not a valid Terabox URL!", quote=True)
@@ -335,9 +331,6 @@ async def terabox_dm(client, message):
         except Exception as e:
             print(e)
             await message.reply_text("Some Error Occurred", quote=True)
-        finally:
-            if user_id in queue_url:
-                 del queue_url[user_id]
               
 
 async def remove_tokens():
